@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços - BarberFlow</title>
+    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .services-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .table-responsive-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .form-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #000;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #000;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert.hidden {
+            display: none;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .barbershop-badge {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 992px) {
+            #servicesTable {
+                min-width: 700px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .services-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-container {
+                width: 100% !important;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons .btn {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-cut"></i>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
+                </div>
+
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="user-info" id="userInfo">
+                    <span id="userName">Carregando...</span>
+                    <button onclick="logout()" class="btn-logout">Sair</button>
+                </div>
+            </div>
+
+            <div class="menu-overlay" id="menuOverlay"></div>
+
+            <nav class="navbar">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="agendamentos.html"><i class="fas fa-calendar-alt"></i> Agendamentos</a></li>
+                    <li><a href="clientes.html"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="servicos.html" class="active"><i class="fas fa-concierge-bell"></i> Serviços</a></li>
+                    <li><a href="financeiro.html"><i class="fas fa-chart-line"></i> Financeiro</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="section">
+                <h2><i class="fas fa-concierge-bell"></i> Gerenciamento de Serviços</h2>
+
+                <div class="services-header mb-20">
+                    <div>
+                        <button id="newServiceBtn" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Novo Serviço
+                        </button>
+                    </div>
+
+                    <div class="search-container" style="min-width: 250px; max-width: 400px; width: 100%;">
+                        <input type="text" id="searchService" class="form-control" placeholder="Pesquisar serviços...">
+                    </div>
+                </div>
+
+                <div id="alertMessage" class="alert hidden"></div>
+
+                <!-- Formulário de serviço -->
+                <div id="serviceFormContainer" class="form-container hidden">
+                    <h3 id="formTitle"><i class="fas fa-plus-circle"></i> Novo Serviço</h3>
+
+                    <form id="serviceForm">
+                        <div class="form-group">
+                            <label for="serviceName">Nome do Serviço *</label>
+                            <input type="text" id="serviceName" class="form-control" placeholder="Ex: Corte Social" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceDescription">Descrição</label>
+                            <textarea id="serviceDescription" class="form-control" rows="3" placeholder="Descrição detalhada do serviço"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="servicePrice">Preço (R$) *</label>
+                            <input type="number" id="servicePrice" class="form-control" step="0.01" min="0" placeholder="Ex: 35.00" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceDuration">Duração (minutos) *</label>
+                            <input type="number" id="serviceDuration" class="form-control" min="5" step="5" value="30" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceCommission">Comissão do Barbeiro (%)</label>
+                            <input type="number" id="serviceCommission" class="form-control" step="1" min="0" max="100" value="50" placeholder="Ex: 50">
+                            <small>Percentual da comissão para o barbeiro</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" id="serviceActive" checked> Serviço ativo
+                            </label>
+                        </div>
+
+                        <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="submit" class="btn btn-primary">Salvar Serviço</button>
+                            <button type="button" id="cancelFormBtn" class="btn btn-secondary">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de serviços -->
+                <div class="table-responsive-container">
+                    <div class="table-container">
+                        <table id="servicesTable">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Preço</th>
+                                    <th>Duração</th>
+                                    <th>Comissão</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="servicesTableBody">
+                                <tr><td colspan="7" style="text-align: center;">Carregando serviços...</td></tr>
+                            </tbody>
+                         </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>BarberFlow &copy; <span id="currentYear"></span> - Sistema de Gerenciamento</p>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://opmpodjqdxtpdolvrzln.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_RYuRxp9GWjfyEMwE3bjMCg_lYIJOg5a';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ============================================
+        // VARIÁVEIS GLOBAIS
+        // ============================================
+        let currentBarbeariaId = null;
+        let currentUser = null;
+        let services = [];
+        let editingServiceId = null;
+
+        // ============================================
+        // FUNÇÕES DE INICIALIZAÇÃO
+        // ============================================
+        
+        async function getCurrentBarbearia() {
+            try {
+                const userStr = sessionStorage.getItem('barberflow_user');
+                if (!userStr) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                
+                currentUser = JSON.parse(userStr);
+                
+                if (currentUser.barbearia_id) {
+                    const { data: barbearia, error } = await supabaseClient
+                        .from('barbearias')
+                        .select('*')
+                        .eq('id', currentUser.barbearia_id)
+                        .single();
+                    
+                    if (error) throw error;
+                    
+                    currentBarbeariaId = barbearia.id;
+                    sessionStorage.setItem('currentBarbeariaId', barbearia.id);
+                    sessionStorage.setItem('currentBarbeariaName', barbearia.nome);
+                    
+                    const badge = document.getElementById('barbershopBadge');
+                    const nameSpan = document.getElementById('barbershopName');
+                    if (barbearia.nome && badge && nameSpan) {
+                        nameSpan.textContent = barbearia.nome;
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+                
+                const userNameSpan = document.getElementById('userName');
+                if (userNameSpan && currentUser.nome) {
+                    userNameSpan.textContent = currentUser.nome;
+                } else if (userNameSpan && currentUser.email) {
+                    userNameSpan.textContent = currentUser.email;
+                }
+                
+                return currentBarbeariaId;
+            } catch (error) {
+                console.error('Erro ao buscar barbearia:', error);
+                showAlert('Erro ao carregar dados da barbearia', 'error');
+                return null;
+            }
+        }
+
+        async function loadServices() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('servicos')
+                    .select('*')
+                    .eq('barbearia_id', currentBarbeariaId)
+                    .order('nome', { ascending: true });
+                
+                if (error) throw error;
+                
+                services = data || [];
+                renderServicesTable();
+                return services;
+            } catch (error) {
+                console.error('Erro ao carregar serviços:', error);
+                showAlert('Erro ao carregar serviços', 'error');
+                return [];
+            }
+        }
+
+        async function saveService(serviceData) {
+            try {
+                const cleanData = {
+                    nome: serviceData.nome,
+                    descricao: serviceData.descricao || null,
+                    preco: serviceData.preco,
+                    duracao_minutos: serviceData.duracao_minutos,
+                    comissao_barbeiro: serviceData.comissao_barbeiro,
+                    status: serviceData.status,
+                    barbearia_id: currentBarbeariaId
+                };
+                
+                let result;
+                if (editingServiceId) {
+                    result = await supabaseClient
+                        .from('servicos')
+                        .update(cleanData)
+                        .eq('id', editingServiceId)
+                        .eq('barbearia_id', currentBarbeariaId);
+                } else {
+                    result = await supabaseClient
+                        .from('servicos')
+                        .insert([cleanData]);
+                }
+                
+                if (result.error) throw result.error;
+                
+                showAlert(editingServiceId ? 'Serviço atualizado!' : 'Serviço criado!', 'success');
+                await loadServices();
+                hideForm();
+                editingServiceId = null;
+                return true;
+            } catch (error) {
+                console.error('Erro ao salvar serviço:', error);
+                showAlert('Erro ao salvar serviço: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function deleteService(id) {
+            if (!confirm('Tem certeza que deseja excluir este serviço?')) return;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('servicos')
+                    .delete()
+                    .eq('id', id)
+                    .eq('barbearia_id', currentBarbeariaId);
+                
+                if (error) throw error;
+                
+                showAlert('Serviço excluído!', 'success');
+                await loadServices();
+            } catch (error) {
+                console.error('Erro ao excluir serviço:', error);
+                showAlert('Erro ao excluir serviço', 'error');
+            }
+        }
+
+        async function toggleServiceStatus(id, currentStatus) {
+            const newStatus = currentStatus === 'ativo' ? 'inativo' : 'ativo';
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('servicos')
+                    .update({ status: newStatus })
+                    .eq('id', id)
+                    .eq('barbearia_id', currentBarbeariaId);
+                
+                if (error) throw error;
+                
+                showAlert(`Serviço ${newStatus === 'ativo' ? 'ativado' : 'desativado'}!`, 'success');
+                await loadServices();
+            } catch (error) {
+                console.error('Erro ao alterar status:', error);
+                showAlert('Erro ao alterar status do serviço', 'error');
+            }
+        }
+
+        // ============================================
+        // FUNÇÕES DE UI
+        // ============================================
+        
+        function renderServicesTable() {
+            const tbody = document.getElementById('servicesTableBody');
+            const searchTerm = document.getElementById('searchService')?.value.toLowerCase() || '';
+            
+            let filteredServices = services;
+            if (searchTerm) {
+                filteredServices = services.filter(s => 
+                    s.nome.toLowerCase().includes(searchTerm) ||
+                    (s.descricao && s.descricao.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            if (filteredServices.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum serviço encontrado</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filteredServices.map(service => `
+                <tr>
+                    <td><strong>${escapeHtml(service.nome)}</strong></td>
+                    <td>${escapeHtml(service.descricao || '-')}</td>
+                    <td style="color: #28a745; font-weight: bold;">${formatMoney(service.preco)}</td>
+                    <td>${service.duracao_minutos} min</td>
+                    <td>${service.comissao_barbeiro || 50}%</td>
+                    <td>
+                        <span class="status-badge ${service.status === 'ativo' ? 'status-active' : 'status-inactive'}">
+                            ${service.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <button class="btn btn-warning btn-sm" onclick="editService('${service.id}')">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteService('${service.id}')">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="toggleServiceStatus('${service.id}', '${service.status}')">
+                            <i class="fas fa-${service.status === 'ativo' ? 'ban' : 'check-circle'}"></i> ${service.status === 'ativo' ? 'Desativar' : 'Ativar'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function editService(id) {
+            const service = services.find(s => s.id === id);
+            if (!service) return;
+            
+            editingServiceId = id;
+            
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-edit"></i> Editar Serviço';
+            document.getElementById('serviceName').value = service.nome;
+            document.getElementById('serviceDescription').value = service.descricao || '';
+            document.getElementById('servicePrice').value = service.preco;
+            document.getElementById('serviceDuration').value = service.duracao_minutos;
+            document.getElementById('serviceCommission').value = service.comissao_barbeiro || 50;
+            document.getElementById('serviceActive').checked = service.status === 'ativo';
+            
+            showForm();
+        }
+
+        function showForm() {
+            const formContainer = document.getElementById('serviceFormContainer');
+            formContainer.classList.remove('hidden');
+            formContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideForm() {
+            const formContainer = document.getElementById('serviceFormContainer');
+            formContainer.classList.add('hidden');
+            document.getElementById('serviceForm').reset();
+            document.getElementById('serviceActive').checked = true;
+            document.getElementById('serviceCommission').value = 50;
+            document.getElementById('formTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Novo Serviço';
+            editingServiceId = null;
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                alertDiv.classList.add('hidden');
+            }, 3000);
+        }
+
+        function formatMoney(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        
+        document.getElementById('serviceForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                nome: document.getElementById('serviceName').value.trim(),
+                descricao: document.getElementById('serviceDescription').value.trim() || null,
+                preco: parseFloat(document.getElementById('servicePrice').value),
+                duracao_minutos: parseInt(document.getElementById('serviceDuration').value),
+                comissao_barbeiro: parseFloat(document.getElementById('serviceCommission').value),
+                status: document.getElementById('serviceActive').checked ? 'ativo' : 'inativo'
+            };
+            
+            if (!formData.nome) {
+                showAlert('Nome do serviço é obrigatório', 'error');
+                return;
+            }
+            
+            if (isNaN(formData.preco) || formData.preco <= 0) {
+                showAlert('Preço deve ser maior que zero', 'error');
+                return;
+            }
+            
+            if (isNaN(formData.duracao_minutos) || formData.duracao_minutos < 5) {
+                showAlert('Duração deve ser de pelo menos 5 minutos', 'error');
+                return;
+            }
+            
+            const submitBtn = document.querySelector('#serviceForm button[type="submit"]');
+            const originalText = submitBtn?.innerHTML;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            }
+            
+            await saveService(formData);
+            
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+
+        document.getElementById('cancelFormBtn')?.addEventListener('click', hideForm);
+        document.getElementById('newServiceBtn')?.addEventListener('click', () => {
+            editingServiceId = null;
+            document.getElementById('serviceForm').reset();
+            document.getElementById('serviceActive').checked = true;
+            document.getElementById('serviceCommission').value = 50;
+            showForm();
+        });
+        
+        document.getElementById('searchService')?.addEventListener('input', () => {
+            renderServicesTable();
+        });
+
+        // ============================================
+        // FUNÇÕES GLOBAIS
+        // ============================================
+        
+        window.logout = function() {
+            if (confirm('Deseja realmente sair do sistema?')) {
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        };
+        
+        window.editService = editService;
+        window.deleteService = deleteService;
+        window.toggleServiceStatus = toggleServiceStatus;
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        if (!sessionStorage.getItem('barberflow_user')) {
+            window.location.href = 'login.html';
+        } else {
+            (async () => {
+                await getCurrentBarbearia();
+                await loadServices();
+            })();
+        }
+        
+        // Menu hambúrguer
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('menuToggle');
+            const overlay = document.getElementById('menuOverlay');
+            const menu = document.querySelector('.navbar');
+            
+            if (btn && menu) {
+                let menuAberto = false;
+                
+                function abrirMenu() {
+                    menu.style.left = '0px';
+                    menuAberto = true;
+                    if (overlay) overlay.style.display = 'block';
+                    btn.querySelector('i').className = 'fas fa-times';
+                }
+                
+                function fecharMenu() {
+                    menu.style.left = '-280px';
+                    menuAberto = false;
+                    if (overlay) overlay.style.display = 'none';
+                    btn.querySelector('i').className = 'fas fa-bars';
+                }
+                
+                btn.addEventListener('click', () => menuAberto ? fecharMenu() : abrirMenu());
+                if (overlay) overlay.addEventListener('click', fecharMenu);
+                
+                menu.style.position = 'fixed';
+                menu.style.left = '-280px';
+                menu.style.transition = 'left 0.3s';
+                if (overlay) overlay.style.display = 'none';
+                
+                function checkWidth() {
+                    if (window.innerWidth > 768) {
+                        btn.style.display = 'none';
+                        menu.style.position = 'static';
+                        menu.style.left = 'auto';
+                        if (menuAberto) fecharMenu();
+                    } else {
+                        btn.style.display = 'flex';
+                        menu.style.position = 'fixed';
+                        if (!menuAberto) menu.style.left = '-280px';
+                    }
+                }
+                
+                checkWidth();
+                window.addEventListener('resize', checkWidth);
+            }
+        });
+    </script>
+</body>
+</html>

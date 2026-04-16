@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BarberFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Cabeçalho */
+        .header {
+            background-color: #000;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-logout {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-logout:hover {
+            background-color: #555;
+        }
+
+        /* Navegação */
+        .navbar {
+            background-color: #111;
+        }
+
+        .navbar ul {
+            display: flex;
+            list-style: none;
+            padding: 0 30px;
+        }
+
+        .navbar li {
+            flex: 1;
+        }
+
+        .navbar a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ddd;
+            text-decoration: none;
+            padding: 15px 20px;
+            transition: all 0.3s;
+            text-align: center;
+            justify-content: center;
+            border-bottom: 3px solid transparent;
+        }
+
+        .navbar a:hover, .navbar a.active {
+            background-color: #222;
+            color: white;
+            border-bottom: 3px solid white;
+        }
+
+        .navbar i {
+            font-size: 1.2rem;
+        }
+
+        /* Botão do menu hambúrguer */
+        .menu-toggle {
+            display: none;
+            background: #333;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            z-index: 1001;
+        }
+
+        /* Conteúdo principal */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Widget de data e hora */
+        .datetime-widget {
+            background: linear-gradient(135deg, #000 0%, #333 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .current-time {
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .current-date {
+            font-size: 1.1rem;
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+
+        .welcome-section {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .welcome-section h2 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .stat-change.positive { color: #28a745; }
+        .stat-change.negative { color: #dc3545; }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #000 0%, #333 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .recent-appointments {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .recent-appointments h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .appointment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .appointment-item:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .appointment-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .appointment-meta i {
+            margin-right: 5px;
+        }
+
+        .appointment-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-agendado { background: #e3f2fd; color: #1565c0; }
+        .status-confirmado { background: #e8f5e9; color: #2e7d32; }
+        .status-concluido { background: #f3e5f5; color: #7b1fa2; }
+        .status-cancelado { background: #ffebee; color: #c62828; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .barber-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .barbershop-badge {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer {
+            background-color: #000;
+            color: #ddd;
+            padding: 20px 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Menu responsivo */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .logo-container {
+                padding-right: 70px;
+                position: relative;
+            }
+            
+            .navbar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                width: 280px;
+                height: 100vh;
+                background: #111;
+                z-index: 1000;
+                transition: left 0.3s ease;
+                padding-top: 80px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+                overflow-y: auto;
+            }
+            
+            .navbar.active {
+                left: 0;
+            }
+            
+            .navbar ul {
+                flex-direction: column;
+                padding: 0;
+            }
+            
+            .navbar li {
+                width: 100%;
+                border-bottom: 1px solid #222;
+            }
+            
+            .navbar a {
+                padding: 18px 25px;
+                justify-content: flex-start;
+                border-left: 4px solid transparent;
+                border-bottom: none;
+            }
+            
+            .navbar a:hover, .navbar a.active {
+                border-left: 4px solid white;
+                border-bottom: none;
+            }
+            
+            .menu-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+                display: none;
+            }
+            
+            .menu-overlay.active {
+                display: block;
+            }
+            
+            .barber-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .appointment-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .appointment-meta {
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-cut"></i>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
+                </div>
+
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="user-info" id="userInfo">
+                    <span id="userName">Carregando...</span>
+                    <button onclick="logout()" class="btn-logout">Sair</button>
+                </div>
+            </div>
+
+            <div class="menu-overlay" id="menuOverlay"></div>
+
+            <nav class="navbar">
+                <ul>
+                    <li><a href="index.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="agendamentos.html"><i class="fas fa-calendar-alt"></i> Agendamentos</a></li>
+                    <li><a href="clientes.html"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="servicos.html"><i class="fas fa-concierge-bell"></i> Serviços</a></li>
+                    <li><a href="financeiro.html"><i class="fas fa-chart-line"></i> Financeiro</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <!-- Widget de data e hora -->
+            <div class="datetime-widget fade-in">
+                <div class="current-time" id="currentTime">00:00:00</div>
+                <div class="current-date" id="currentDate">Carregando...</div>
+            </div>
+
+            <!-- Mensagem de boas-vindas -->
+            <div class="welcome-section fade-in">
+                <h2 id="welcomeMessage">Bem-vindo ao BarberFlow</h2>
+                <p id="dashboardMessage">Carregando informações do sistema...</p>
+            </div>
+
+            <!-- Cards de estatísticas -->
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Agendamentos Hoje</h3>
+                    <div class="stat-value" id="todayAppointments">0</div>
+                    <div class="stat-change" id="todayAppointmentsChange">Carregando...</div>
+                </div>
+
+                <div class="stat-card fade-in">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>Receita do Mês</h3>
+                    <div class="stat-value" id="monthRevenue">R$ 0,00</div>
+                    <div class="stat-change" id="monthRevenueChange">Carregando...</div>
+                </div>
+
+                <div class="stat-card fade-in">
+                    <i class="fas fa-users"></i>
+                    <h3>Total de Clientes</h3>
+                    <div class="stat-value" id="totalClients">0</div>
+                    <div class="stat-change" id="newClients">Carregando...</div>
+                </div>
+
+                <div class="stat-card fade-in">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Taxa de Ocupação</h3>
+                    <div class="stat-value" id="occupancyRate">0%</div>
+                    <div class="stat-change" id="occupancyTrend">Carregando...</div>
+                </div>
+            </div>
+
+            <!-- Ações rápidas -->
+            <div class="quick-actions fade-in">
+                <a href="agendamentos.html" class="action-btn">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Novo Agendamento</span>
+                </a>
+
+                <a href="clientes.html" class="action-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Novo Cliente</span>
+                </a>
+
+                <a href="agendamentos.html" class="action-btn">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>Ver Agenda Hoje</span>
+                </a>
+
+                <a href="financeiro.html" class="action-btn">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Relatórios Financeiros</span>
+                </a>
+            </div>
+
+            <!-- Próximos agendamentos -->
+            <div class="recent-appointments fade-in">
+                <h3><i class="fas fa-clock"></i> Próximos Agendamentos</h3>
+                <div id="upcomingAppointments">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando agendamentos...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desempenho dos Barbeiros -->
+            <div class="recent-appointments fade-in">
+                <h3><i class="fas fa-user-tie"></i> Desempenho dos Barbeiros (Este Mês)</h3>
+                <div id="barberPerformance">
+                    <div class="empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando desempenho dos barbeiros...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>BarberFlow © <span id="currentYear">2026</span> - Sistema de Gestão Profissional</p>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE (USANDO VARIÁVEL GLOBAL)
+        // ============================================
+        const SUPABASE_URL = 'https://opmpodjqdxtpdolvrzln.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_RYuRxp9GWjfyEMwE3bjMCg_lYIJOg5a';
+        
+        // Usar a variável global 'supabase' já criada
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ============================================
+        // VARIÁVEIS GLOBAIS
+        // ============================================
+        let currentBarbeariaId = null;
+        let currentUser = null;
+        let refreshInterval = null;
+
+        // ============================================
+        // FUNÇÕES DE INICIALIZAÇÃO
+        // ============================================
+        
+        async function getCurrentBarbearia() {
+            try {
+                const userStr = sessionStorage.getItem('barberflow_user');
+                if (!userStr) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                
+                currentUser = JSON.parse(userStr);
+                
+                if (currentUser.barbearia_id) {
+                    const { data: barbearia, error } = await supabaseClient
+                        .from('barbearias')
+                        .select('*')
+                        .eq('id', currentUser.barbearia_id)
+                        .single();
+                    
+                    if (error) throw error;
+                    
+                    currentBarbeariaId = barbearia.id;
+                    sessionStorage.setItem('currentBarbeariaId', barbearia.id);
+                    sessionStorage.setItem('currentBarbeariaName', barbearia.nome);
+                    
+                    const badge = document.getElementById('barbershopBadge');
+                    const nameSpan = document.getElementById('barbershopName');
+                    if (barbearia.nome && badge && nameSpan) {
+                        nameSpan.textContent = barbearia.nome;
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+                
+                const userNameSpan = document.getElementById('userName');
+                if (userNameSpan && currentUser.nome) {
+                    userNameSpan.textContent = currentUser.nome;
+                } else if (userNameSpan && currentUser.email) {
+                    userNameSpan.textContent = currentUser.email;
+                }
+                
+                return currentBarbeariaId;
+            } catch (error) {
+                console.error('Erro ao buscar barbearia:', error);
+                return null;
+            }
+        }
+
+        // Atualizar data e hora em tempo real
+        function updateDateTime() {
+            const now = new Date();
+            
+            const timeString = now.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const dateString = now.toLocaleDateString('pt-BR', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            
+            document.getElementById('currentTime').textContent = timeString;
+            document.getElementById('currentDate').textContent = dateString;
+            
+            const hour = now.getHours();
+            let greeting = 'Boa noite';
+            if (hour >= 5 && hour < 12) greeting = 'Bom dia';
+            else if (hour >= 12 && hour < 18) greeting = 'Boa tarde';
+            
+            if (currentUser) {
+                document.getElementById('welcomeMessage').textContent = `${greeting}, ${currentUser.nome || currentUser.email || 'Usuário'}!`;
+            }
+        }
+
+        // Carregar dados do dashboard
+        async function loadDashboardData() {
+            if (!currentBarbeariaId) return;
+            
+            try {
+                document.getElementById('dashboardMessage').textContent = 'Atualizando informações...';
+                
+                const today = new Date().toISOString().split('T')[0];
+                const firstDayOfMonth = new Date();
+                firstDayOfMonth.setDate(1);
+                firstDayOfMonth.setHours(0, 0, 0, 0);
+                const firstDayStr = firstDayOfMonth.toISOString().split('T')[0];
+                
+                // 1. Buscar agendamentos
+                const { data: appointments, error: aptError } = await supabaseClient
+                    .from('agendamentos')
+                    .select(`
+                        *,
+                        servicos (preco, nome),
+                        barbeiros (nome),
+                        clientes (nome, telefone)
+                    `)
+                    .eq('barbearia_id', currentBarbeariaId);
+                
+                if (aptError) throw aptError;
+                
+                // Contar agendamentos de hoje
+                const todayAppointments = appointments?.filter(a => 
+                    a.data_hora?.split('T')[0] === today && 
+                    a.status !== 'cancelado'
+                ) || [];
+                
+                const todayCount = todayAppointments.length;
+                document.getElementById('todayAppointments').textContent = todayCount;
+                document.getElementById('todayAppointmentsChange').textContent = `${todayCount} agendamentos hoje`;
+                
+                // Calcular receita do mês
+                const monthAppointments = appointments?.filter(a => 
+                    a.data_hora?.split('T')[0] >= firstDayStr &&
+                    a.status === 'concluido'
+                ) || [];
+                
+                const monthRevenue = monthAppointments.reduce((sum, a) => sum + (a.servicos?.preco || 0), 0);
+                document.getElementById('monthRevenue').textContent = formatMoney(monthRevenue);
+                document.getElementById('monthRevenueChange').textContent = `${monthAppointments.length} serviços concluídos`;
+                
+                // 2. Contar clientes
+                const { count: totalClients, error: clientError } = await supabaseClient
+                    .from('clientes')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('barbearia_id', currentBarbeariaId);
+                
+                if (!clientError) {
+                    document.getElementById('totalClients').textContent = totalClients || 0;
+                    document.getElementById('newClients').textContent = `${totalClients || 0} clientes cadastrados`;
+                }
+                
+                // 3. Calcular taxa de ocupação
+                const totalSlots = 48;
+                const occupancyRate = Math.min(100, Math.round((todayCount / totalSlots) * 100));
+                document.getElementById('occupancyRate').textContent = `${occupancyRate}%`;
+                
+                if (occupancyRate > 80) {
+                    document.getElementById('occupancyTrend').textContent = '🔴 Alta demanda - Agenda cheia';
+                    document.getElementById('occupancyTrend').className = 'stat-change negative';
+                } else if (occupancyRate > 60) {
+                    document.getElementById('occupancyTrend').textContent = '🟡 Média - Alguns horários disponíveis';
+                    document.getElementById('occupancyTrend').className = 'stat-change';
+                } else if (occupancyRate > 30) {
+                    document.getElementById('occupancyTrend').textContent = '🟢 Normal - Muitos horários livres';
+                    document.getElementById('occupancyTrend').className = 'stat-change positive';
+                } else {
+                    document.getElementById('occupancyTrend').textContent = '⚪ Baixa - Poucos agendamentos';
+                    document.getElementById('occupancyTrend').className = 'stat-change';
+                }
+                
+                // 4. Carregar próximos agendamentos
+                await loadUpcomingAppointments(appointments || [], today);
+                
+                // 5. Carregar desempenho dos barbeiros
+                await loadBarberPerformance(appointments || [], firstDayStr);
+                
+                document.getElementById('dashboardMessage').innerHTML = `✅ Sistema atualizado • ${todayCount} agendamentos hoje • ${formatMoney(monthRevenue)} em receitas`;
+                document.getElementById('dashboardMessage').style.color = '#28a745';
+                
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                document.getElementById('dashboardMessage').innerHTML = '⚠️ Erro ao carregar dados. Tente novamente.';
+                document.getElementById('dashboardMessage').style.color = '#dc3545';
+            }
+        }
+
+        async function loadUpcomingAppointments(appointments, today) {
+            const container = document.getElementById('upcomingAppointments');
+            
+            const upcoming = appointments
+                ?.filter(a => a.data_hora?.split('T')[0] >= today && a.status !== 'cancelado')
+                .sort((a, b) => new Date(a.data_hora) - new Date(b.data_hora))
+                .slice(0, 6) || [];
+            
+            if (upcoming.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-plus"></i>
+                        <p>Nenhum agendamento futuro encontrado</p>
+                        <small>Clique em "Novo Agendamento" para começar</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = upcoming.map(apt => {
+                const isToday = apt.data_hora?.split('T')[0] === today;
+                const formattedDate = isToday ? 'HOJE' : formatDate(apt.data_hora);
+                
+                let statusClass = 'status-agendado';
+                if (apt.status === 'confirmado') statusClass = 'status-confirmado';
+                else if (apt.status === 'concluido') statusClass = 'status-concluido';
+                else if (apt.status === 'cancelado') statusClass = 'status-cancelado';
+                
+                const statusText = apt.status === 'confirmado' ? 'Confirmado' : 
+                                  apt.status === 'concluido' ? 'Concluído' :
+                                  apt.status === 'cancelado' ? 'Cancelado' : 'Agendado';
+                
+                return `
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <h4>${apt.clientes?.nome || 'Cliente'}</h4>
+                            <div class="appointment-meta">
+                                <span><i class="fas fa-scissors"></i> ${apt.servicos?.nome || 'Serviço'}</span>
+                                <span><i class="fas fa-user-tie"></i> ${apt.barbeiros?.nome || 'Barbeiro'}</span>
+                                <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                                <span><i class="fas fa-clock"></i> ${formatTime(apt.data_hora)}</span>
+                            </div>
+                        </div>
+                        <div class="appointment-status ${statusClass}">
+                            <i class="fas fa-${apt.status === 'confirmado' ? 'check-circle' : 'calendar'}"></i>
+                            ${statusText}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadBarberPerformance(appointments, firstDayStr) {
+            const container = document.getElementById('barberPerformance');
+            
+            const { data: barbers, error: barberError } = await supabaseClient
+                .from('barbeiros')
+                .select('id, nome')
+                .eq('barbearia_id', currentBarbeariaId)
+                .eq('status', 'ativo');
+            
+            if (barberError || !barbers || barbers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-tie"></i>
+                        <p>Nenhum barbeiro cadastrado</p>
+                        <small>Cadastre barbeiros no sistema</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            const monthAppointments = appointments?.filter(a => 
+                a.data_hora?.split('T')[0] >= firstDayStr
+            ) || [];
+            
+            const barberStats = {};
+            barbers.forEach(barber => {
+                barberStats[barber.id] = {
+                    nome: barber.nome,
+                    total: 0,
+                    concluidos: 0,
+                    receita: 0,
+                    cancelados: 0
+                };
+            });
+            
+            monthAppointments.forEach(apt => {
+                if (apt.barbeiro_id && barberStats[apt.barbeiro_id]) {
+                    barberStats[apt.barbeiro_id].total++;
+                    if (apt.status === 'concluido') {
+                        barberStats[apt.barbeiro_id].concluidos++;
+                        barberStats[apt.barbeiro_id].receita += apt.servicos?.preco || 0;
+                    } else if (apt.status === 'cancelado') {
+                        barberStats[apt.barbeiro_id].cancelados++;
+                    }
+                }
+            });
+            
+            container.innerHTML = '';
+            
+            for (const barber of Object.values(barberStats)) {
+                const completionRate = barber.total > 0 ? Math.round((barber.concluidos / barber.total) * 100) : 0;
+                
+                let performanceColor = '#28a745';
+                let performanceIcon = 'fa-star';
+                let performanceText = 'Excelente';
+                
+                if (completionRate < 70) {
+                    performanceColor = '#ffc107';
+                    performanceIcon = 'fa-chart-line';
+                    performanceText = 'Bom';
+                }
+                if (completionRate < 50) {
+                    performanceColor = '#dc3545';
+                    performanceIcon = 'fa-exclamation-triangle';
+                    performanceText = 'Precisa melhorar';
+                }
+                
+                const barberCard = document.createElement('div');
+                barberCard.className = 'barber-card';
+                barberCard.style.borderLeft = `5px solid ${performanceColor}`;
+                barberCard.innerHTML = `
+                    <div style="text-align: center;">
+                        <i class="fas fa-user-tie" style="font-size: 2.5rem; color: #000;"></i>
+                        <div style="font-weight: bold; margin-top: 5px;">${barber.nome}</div>
+                    </div>
+                    <div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <div>
+                                <div style="font-size: 0.9rem; color: #666;">Total Atendimentos</div>
+                                <div style="font-size: 1.4rem; font-weight: bold;">${barber.total}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.9rem; color: #666;">Taxa de Conclusão</div>
+                                <div style="font-size: 1.4rem; font-weight: bold; color: ${completionRate >= 70 ? '#28a745' : completionRate >= 50 ? '#ffc107' : '#dc3545'}">
+                                    ${completionRate}%
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.9rem; color: #666;">Receita</div>
+                                <div style="font-size: 1.4rem; font-weight: bold; color: #28a745;">
+                                    ${formatMoney(barber.receita)}
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.9rem; color: #666;">Cancelamentos</div>
+                                <div style="font-size: 1.4rem; font-weight: bold; color: #dc3545;">
+                                    ${barber.cancelados}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; min-width: 120px;">
+                        <div style="font-size: 0.9rem; color: #666;">Desempenho</div>
+                        <div style="font-size: 1.8rem; margin: 5px 0;">
+                            <i class="fas ${performanceIcon}" style="color: ${performanceColor};"></i>
+                        </div>
+                        <div style="font-weight: bold; color: ${performanceColor};">${performanceText}</div>
+                    </div>
+                `;
+                container.appendChild(barberCard);
+            }
+        }
+
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        
+        function formatMoney(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function formatTime(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // ============================================
+        // FUNÇÕES GLOBAIS
+        // ============================================
+        
+        window.logout = function() {
+            if (confirm('Deseja realmente sair do sistema?')) {
+                if (refreshInterval) clearInterval(refreshInterval);
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        };
+
+        // ============================================
+        // INICIALIZAÇÃO
+        // ============================================
+        
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        if (!sessionStorage.getItem('barberflow_user')) {
+            window.location.href = 'login.html';
+        } else {
+            (async () => {
+                await getCurrentBarbearia();
+                await loadDashboardData();
+                
+                updateDateTime();
+                setInterval(updateDateTime, 1000);
+                
+                refreshInterval = setInterval(() => {
+                    if (currentBarbeariaId) loadDashboardData();
+                }, 30000);
+            })();
+        }
+        
+        // Menu hambúrguer
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('menuToggle');
+            const overlay = document.getElementById('menuOverlay');
+            const menu = document.querySelector('.navbar');
+            
+            if (btn && menu) {
+                let menuAberto = false;
+                
+                function abrirMenu() {
+                    menu.style.left = '0px';
+                    menuAberto = true;
+                    if (overlay) overlay.style.display = 'block';
+                    btn.querySelector('i').className = 'fas fa-times';
+                }
+                
+                function fecharMenu() {
+                    menu.style.left = '-280px';
+                    menuAberto = false;
+                    if (overlay) overlay.style.display = 'none';
+                    btn.querySelector('i').className = 'fas fa-bars';
+                }
+                
+                btn.addEventListener('click', () => menuAberto ? fecharMenu() : abrirMenu());
+                if (overlay) overlay.addEventListener('click', fecharMenu);
+                
+                menu.style.position = 'fixed';
+                menu.style.left = '-280px';
+                menu.style.transition = 'left 0.3s';
+                if (overlay) overlay.style.display = 'none';
+                
+                function checkWidth() {
+                    if (window.innerWidth > 768) {
+                        btn.style.display = 'none';
+                        menu.style.position = 'static';
+                        menu.style.left = 'auto';
+                        if (menuAberto) fecharMenu();
+                    } else {
+                        btn.style.display = 'flex';
+                        menu.style.position = 'fixed';
+                        if (!menuAberto) menu.style.left = '-280px';
+                    }
+                }
+                
+                checkWidth();
+                window.addEventListener('resize', checkWidth);
+            }
+        });
+    </script>
+</body>
+</html>

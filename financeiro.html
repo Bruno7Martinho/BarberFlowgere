@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro - BarberFlow</title>
+    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-receita { background: #d4edda; color: #155724; }
+        .status-despesa { background: #f8d7da; color: #721c24; }
+        .status-confirmado { background: #d4edda; color: #155724; }
+        .status-concluido { background: #d4edda; color: #155724; }
+        .text-success { color: #28a745; font-weight: bold; }
+        .text-danger { color: #dc3545; font-weight: bold; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .alert.success { background: #d4edda; color: #155724; }
+        .alert.error { background: #f8d7da; color: #721c24; }
+        .alert.hidden { display: none; }
+        .hidden { display: none; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-icon i { font-size: 24px; color: white; }
+        .card-content h3 { font-size: 14px; color: #666; margin-bottom: 5px; }
+        .card-value { font-size: 24px; font-weight: bold; margin: 0; }
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chart-wrapper { height: 300px; }
+        .table-responsive-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #dee2e6; }
+        th { background: #f8f9fa; font-weight: bold; }
+        .barbershop-badge {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal.hidden { display: none !important; }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            background: #000;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+        .modal-body { padding: 20px; }
+        .modal-footer {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #dee2e6;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #000; color: white; }
+        .btn-primary:hover { background: #333; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: #333; }
+        @media (max-width: 768px) {
+            .charts-container { grid-template-columns: 1fr; }
+            .chart-wrapper { height: 250px; }
+            .card { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-cut"></i>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
+                </div>
+
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="user-info" id="userInfo">
+                    <span id="userName">Carregando...</span>
+                    <button onclick="logout()" class="btn-logout">Sair</button>
+                </div>
+            </div>
+
+            <div class="menu-overlay" id="menuOverlay"></div>
+
+            <nav class="navbar">
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="agendamentos.html"><i class="fas fa-calendar-alt"></i> Agendamentos</a></li>
+                    <li><a href="clientes.html"><i class="fas fa-users"></i> Clientes</a></li>
+                    <li><a href="servicos.html"><i class="fas fa-concierge-bell"></i> Serviços</a></li>
+                    <li><a href="financeiro.html" class="active"><i class="fas fa-chart-line"></i> Financeiro</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="section">
+                <h2><i class="fas fa-chart-line"></i> Dashboard Financeiro</h2>
+
+                <div class="action-buttons" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button id="addExpenseBtn" class="btn btn-danger">
+                        <i class="fas fa-minus-circle"></i> Nova Despesa
+                    </button>
+                    <button id="viewExpensesBtn" class="btn btn-secondary">
+                        <i class="fas fa-list"></i> Ver Despesas
+                    </button>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-icon" style="background-color: #28a745;">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Receita Total (Serviços)</h3>
+                            <p class="card-value" id="totalRevenue">R$ 0,00</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon" style="background-color: #dc3545;">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Despesas Totais</h3>
+                            <p class="card-value" id="totalExpenses">R$ 0,00</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon" style="background-color: #ffc107;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Lucro Líquido</h3>
+                            <p class="card-value" id="netProfit">R$ 0,00</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon" style="background-color: #17a2b8;">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Margem de Lucro</h3>
+                            <p class="card-value" id="profitMargin">0%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filters mb-20">
+                    <div class="filters-container">
+                        <div class="period-select">
+                            <label>Período:</label>
+                            <select id="periodSelect" class="form-control">
+                                <option value="week">Esta Semana</option>
+                                <option value="month" selected>Este Mês</option>
+                                <option value="lastMonth">Mês Anterior</option>
+                                <option value="year">Este Ano</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+
+                        <div id="customPeriod" style="display: none;">
+                            <input type="date" id="startDate" class="form-control">
+                            <input type="date" id="endDate" class="form-control">
+                            <button id="applyCustomDate" class="btn btn-secondary">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <h3><i class="fas fa-chart-bar"></i> Receita vs Despesa</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="revenueExpenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <h3><i class="fas fa-chart-pie"></i> Despesas por Categoria</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="expensesCategoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="expenseFormContainer" class="form-container hidden">
+                    <h3 id="expenseFormTitle"><i class="fas fa-minus-circle"></i> Nova Despesa</h3>
+                    <form id="expenseForm">
+                        <div class="form-group">
+                            <label for="expenseCategory">Categoria *</label>
+                            <select id="expenseCategory" class="form-control" required>
+                                <option value="">Selecione</option>
+                                <option value="Aluguel">Aluguel</option>
+                                <option value="Salários">Salários</option>
+                                <option value="Produtos">Produtos</option>
+                                <option value="Água/Luz">Água/Luz</option>
+                                <option value="Internet">Internet</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Manutenção">Manutenção</option>
+                                <option value="Impostos">Impostos</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseDescription">Descrição *</label>
+                            <input type="text" id="expenseDescription" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseValue">Valor *</label>
+                            <input type="number" id="expenseValue" class="form-control" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expenseDate">Data *</label>
+                            <input type="date" id="expenseDate" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="expensePaymentMethod">Forma de Pagamento</label>
+                            <select id="expensePaymentMethod" class="form-control">
+                                <option value="">Selecione</option>
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="cartao_credito">Cartão de Crédito</option>
+                                <option value="cartao_debito">Cartão de Débito</option>
+                                <option value="pix">PIX</option>
+                                <option value="transferencia">Transferência</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-primary">Salvar Despesa</button>
+                            <button type="button" id="cancelExpenseBtn" class="btn btn-secondary">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="expensesListContainer" class="section hidden">
+                    <h3><i class="fas fa-list"></i> Histórico de Despesas</h3>
+                    <div class="table-responsive-container">
+                        <table id="expensesTable">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Categoria</th>
+                                    <th>Descrição</th>
+                                    <th>Valor</th>
+                                    <th>Forma Pag.</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody">
+                                <tr><td colspan="6" style="text-align: center;">Carregando...</td></tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #f8f9fa; font-weight: bold;">
+                                    <td colspan="3" style="text-align: right;">Total de Despesas:</td>
+                                    <td id="expensesTotal">R$ 0,00</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <button id="closeExpensesBtn" class="btn btn-secondary mt-20">Fechar</button>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-cut"></i> Serviços Realizados (Receitas)</h3>
+                    <div class="table-responsive-container">
+                        <table id="servicesReportTable">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Cliente</th>
+                                    <th>Serviço</th>
+                                    <th>Barbeiro</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="servicesTableBody">
+                                <tr><td colspan="6" style="text-align: center;">Carregando...</td></tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #f8f9fa; font-weight: bold;">
+                                    <td colspan="4" style="text-align: right;">Total de Receitas:</td>
+                                    <td id="servicesTotal">R$ 0,00</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3><i class="fas fa-user-tie"></i> Desempenho por Barbeiro</h3>
+                    <div class="table-responsive-container">
+                        <table id="barberPerformanceTable">
+                            <thead>
+                                <tr>
+                                    <th>Barbeiro</th>
+                                    <th>Serviços Realizados</th>
+                                    <th>Total Receita</th>
+                                    <th>Comissão (50%)</th>
+                                    <th>Média por Serviço</th>
+                                </tr>
+                            </thead>
+                            <tbody id="barberTableBody">
+                                <tr><td colspan="5" style="text-align: center;">Carregando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>BarberFlow &copy; <span id="currentYear"></span> - Sistema de Gerenciamento</p>
+        </footer>
+    </div>
+
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar</h3>
+                <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Tem certeza que deseja excluir esta despesa?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirmActionBtn" class="btn btn-danger">Confirmar</button>
+                <button onclick="closeConfirmModal()" class="btn btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://opmpodjqdxtpdolvrzln.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_RYuRxp9GWjfyEMwE3bjMCg_lYIJOg5a';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentBarbeariaId = null;
+        let currentUser = null;
+        let expenses = [];
+        let completedServices = [];
+        let barbers = [];
+        let revenueExpenseChart = null;
+        let expensesCategoryChart = null;
+        let pendingDeleteId = null;
+        let currentPeriod = 'month';
+
+        async function getCurrentBarbearia() {
+            try {
+                const userStr = sessionStorage.getItem('barberflow_user');
+                if (!userStr) {
+                    window.location.href = 'login.html';
+                    return null;
+                }
+                
+                currentUser = JSON.parse(userStr);
+                
+                if (currentUser.barbearia_id) {
+                    const { data: barbearia, error } = await supabaseClient
+                        .from('barbearias')
+                        .select('*')
+                        .eq('id', currentUser.barbearia_id)
+                        .single();
+                    
+                    if (error) throw error;
+                    
+                    currentBarbeariaId = barbearia.id;
+                    sessionStorage.setItem('currentBarbeariaId', barbearia.id);
+                    sessionStorage.setItem('currentBarbeariaName', barbearia.nome);
+                    
+                    const badge = document.getElementById('barbershopBadge');
+                    const nameSpan = document.getElementById('barbershopName');
+                    if (barbearia.nome && badge && nameSpan) {
+                        nameSpan.textContent = barbearia.nome;
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+                
+                const userNameSpan = document.getElementById('userName');
+                if (userNameSpan && currentUser.nome) {
+                    userNameSpan.textContent = currentUser.nome;
+                } else if (userNameSpan && currentUser.email) {
+                    userNameSpan.textContent = currentUser.email;
+                }
+                
+                return currentBarbeariaId;
+            } catch (error) {
+                console.error('Erro:', error);
+                return null;
+            }
+        }
+
+        async function loadBarbers() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('barbeiros')
+                    .select('id, nome')
+                    .eq('barbearia_id', currentBarbeariaId)
+                    .eq('status', 'ativo');
+                
+                if (error) throw error;
+                barbers = data || [];
+                return barbers;
+            } catch (error) {
+                console.error('Erro ao carregar barbeiros:', error);
+                return [];
+            }
+        }
+
+        async function loadExpenses() {
+            try {
+                let query = supabaseClient
+                    .from('financeiro')
+                    .select('*')
+                    .eq('barbearia_id', currentBarbeariaId)
+                    .eq('tipo', 'despesa');
+                
+                const { startDate, endDate } = getDateRange();
+                if (startDate) {
+                    query = query.gte('data_movimento', startDate);
+                }
+                if (endDate) {
+                    query = query.lte('data_movimento', endDate);
+                }
+                
+                const { data, error } = await query.order('data_movimento', { ascending: false });
+                
+                if (error) throw error;
+                expenses = data || [];
+                return expenses;
+            } catch (error) {
+                console.error('Erro ao carregar despesas:', error);
+                return [];
+            }
+        }
+
+        async function loadCompletedServices() {
+            try {
+                const { startDate, endDate } = getDateRange();
+                
+                let query = supabaseClient
+                    .from('agendamentos')
+                    .select(`
+                        *,
+                        clientes (nome),
+                        barbeiros (nome),
+                        servicos (nome, preco)
+                    `)
+                    .eq('barbearia_id', currentBarbeariaId)
+                    .eq('status', 'concluido');
+                
+                if (startDate) {
+                    query = query.gte('data_hora', startDate);
+                }
+                if (endDate) {
+                    query = query.lte('data_hora', endDate + 'T23:59:59');
+                }
+                
+                const { data, error } = await query.order('data_hora', { ascending: false });
+                
+                if (error) throw error;
+                completedServices = data || [];
+                return completedServices;
+            } catch (error) {
+                console.error('Erro ao carregar serviços:', error);
+                return [];
+            }
+        }
+
+        async function saveExpense(expenseData) {
+            try {
+                const { error } = await supabaseClient
+                    .from('financeiro')
+                    .insert([{
+                        tipo: 'despesa',
+                        categoria: expenseData.categoria,
+                        descricao: expenseData.descricao,
+                        valor: expenseData.valor,
+                        data_movimento: expenseData.data_movimento,
+                        forma_pagamento: expenseData.forma_pagamento || null,
+                        barbearia_id: currentBarbeariaId,
+                        status: 'confirmado'
+                    }]);
+                
+                if (error) throw error;
+                
+                showAlert('Despesa salva com sucesso!', 'success');
+                await refreshData();
+                hideExpenseForm();
+                return true;
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                showAlert('Erro ao salvar despesa: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function deleteExpense(id) {
+            try {
+                const { error } = await supabaseClient
+                    .from('financeiro')
+                    .delete()
+                    .eq('id', id)
+                    .eq('barbearia_id', currentBarbeariaId);
+                
+                if (error) throw error;
+                
+                showAlert('Despesa excluída!', 'success');
+                await refreshData();
+                return true;
+            } catch (error) {
+                console.error('Erro ao excluir:', error);
+                showAlert('Erro ao excluir despesa', 'error');
+                return false;
+            }
+        }
+
+        function getDateRange() {
+            const today = new Date();
+            let startDate = null;
+            let endDate = null;
+            
+            const period = document.getElementById('periodSelect')?.value || currentPeriod;
+            currentPeriod = period;
+            
+            if (period === 'week') {
+                const start = new Date(today);
+                start.setDate(today.getDate() - today.getDay());
+                startDate = start.toISOString().split('T')[0];
+                endDate = today.toISOString().split('T')[0];
+            } else if (period === 'month') {
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+                endDate = today.toISOString().split('T')[0];
+            } else if (period === 'lastMonth') {
+                startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1).toISOString().split('T')[0];
+                endDate = new Date(today.getFullYear(), today.getMonth(), 0).toISOString().split('T')[0];
+            } else if (period === 'year') {
+                startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
+                endDate = today.toISOString().split('T')[0];
+            } else if (period === 'custom') {
+                startDate = document.getElementById('startDate')?.value;
+                endDate = document.getElementById('endDate')?.value;
+            }
+            
+            return { startDate, endDate };
+        }
+
+        function updateSummaryCards() {
+            const totalReceitas = completedServices.reduce((sum, s) => sum + (s.valor_total || 0), 0);
+            const totalDespesas = expenses.reduce((sum, e) => sum + e.valor, 0);
+            
+            const lucro = totalReceitas - totalDespesas;
+            const margem = totalReceitas > 0 ? (lucro / totalReceitas) * 100 : 0;
+            
+            document.getElementById('totalRevenue').textContent = formatMoney(totalReceitas);
+            document.getElementById('totalExpenses').textContent = formatMoney(totalDespesas);
+            document.getElementById('netProfit').textContent = formatMoney(lucro);
+            document.getElementById('profitMargin').textContent = margem.toFixed(1) + '%';
+        }
+
+        function updateCharts() {
+            const receitasPorDia = {};
+            const despesasPorDia = {};
+            
+            completedServices.forEach(s => {
+                const date = s.data_hora?.split('T')[0];
+                if (date) {
+                    receitasPorDia[date] = (receitasPorDia[date] || 0) + (s.valor_total || 0);
+                }
+            });
+            
+            expenses.forEach(e => {
+                const date = e.data_movimento;
+                despesasPorDia[date] = (despesasPorDia[date] || 0) + e.valor;
+            });
+            
+            const dates = [...new Set([...Object.keys(receitasPorDia), ...Object.keys(despesasPorDia)])].sort();
+            
+            if (revenueExpenseChart) {
+                revenueExpenseChart.destroy();
+            }
+            
+            const ctx1 = document.getElementById('revenueExpenseChart').getContext('2d');
+            revenueExpenseChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: dates.map(d => formatDate(d)),
+                    datasets: [
+                        {
+                            label: 'Receitas (Serviços)',
+                            data: dates.map(d => receitasPorDia[d] || 0),
+                            backgroundColor: '#28a745',
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Despesas',
+                            data: dates.map(d => despesasPorDia[d] || 0),
+                            backgroundColor: '#dc3545',
+                            borderRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': ' + formatMoney(ctx.raw) } }
+                    }
+                }
+            });
+            
+            const despesasPorCategoria = {};
+            expenses.forEach(e => {
+                despesasPorCategoria[e.categoria] = (despesasPorCategoria[e.categoria] || 0) + e.valor;
+            });
+            
+            if (expensesCategoryChart) {
+                expensesCategoryChart.destroy();
+            }
+            
+            const ctx2 = document.getElementById('expensesCategoryChart').getContext('2d');
+            expensesCategoryChart = new Chart(ctx2, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(despesasPorCategoria),
+                    datasets: [{
+                        data: Object.values(despesasPorCategoria),
+                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40', '#c9cbcf', '#7b1fa2', '#f39c12'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: { callbacks: { label: (ctx) => ctx.label + ': ' + formatMoney(ctx.raw) } }
+                    }
+                }
+            });
+        }
+
+        function renderExpensesTable() {
+            const tbody = document.getElementById('expensesTableBody');
+            if (!tbody) return;
+            
+            if (expenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhuma despesa encontrada</td></tr>';
+                document.getElementById('expensesTotal').textContent = formatMoney(0);
+                return;
+            }
+            
+            const total = expenses.reduce((sum, e) => sum + e.valor, 0);
+            
+            let html = '';
+            for (const e of expenses) {
+                html += '<tr>';
+                html += '<td>' + formatDate(e.data_movimento) + '</td>';
+                html += '<td>' + escapeHtml(e.categoria) + '</td>';
+                html += '<td>' + escapeHtml(e.descricao) + '</td>';
+                html += '<td class="text-danger">' + formatMoney(e.valor) + '</td>';
+                html += '<td>' + getPaymentMethodText(e.forma_pagamento) + '</td>';
+                html += '<td><button class="btn btn-danger btn-sm" onclick="confirmDelete(\'' + e.id + '\')"><i class="fas fa-trash"></i></button></td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+            
+            document.getElementById('expensesTotal').textContent = formatMoney(total);
+        }
+
+        function renderServicesTable() {
+            const tbody = document.getElementById('servicesTableBody');
+            if (!tbody) return;
+            
+            if (completedServices.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum serviço concluído no período</td></tr>';
+                document.getElementById('servicesTotal').textContent = formatMoney(0);
+                return;
+            }
+            
+            const total = completedServices.reduce((sum, s) => sum + (s.valor_total || 0), 0);
+            
+            let html = '';
+            for (const s of completedServices) {
+                html += '<tr>';
+                html += '<td>' + formatDateTime(s.data_hora) + '</td>';
+                html += '<td>' + escapeHtml(s.clientes?.nome || '-') + '</td>';
+                html += '<td>' + escapeHtml(s.servicos?.nome || '-') + '</td>';
+                html += '<td>' + escapeHtml(s.barbeiros?.nome || '-') + '</td>';
+                html += '<td class="text-success">' + formatMoney(s.valor_total) + '</td>';
+                html += '<td><span class="status-badge status-concluido">Concluído</span></td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+            
+            document.getElementById('servicesTotal').textContent = formatMoney(total);
+        }
+
+        function renderBarberPerformance() {
+            const tbody = document.getElementById('barberTableBody');
+            if (!tbody) return;
+            
+            const barberStats = {};
+            
+            completedServices.forEach(service => {
+                const barberId = service.barbeiro_id;
+                const barberName = service.barbeiros?.nome || 'Desconhecido';
+                if (!barberStats[barberId]) {
+                    barberStats[barberId] = {
+                        nome: barberName,
+                        quantidade: 0,
+                        total: 0
+                    };
+                }
+                barberStats[barberId].quantidade++;
+                barberStats[barberId].total += service.valor_total;
+            });
+            
+            const statsArray = Object.values(barberStats);
+            
+            if (statsArray.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhum dado disponível</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            for (const stat of statsArray) {
+                html += '<tr>';
+                html += '<td><strong>' + escapeHtml(stat.nome) + '</strong></td>';
+                html += '<td>' + stat.quantidade + '</td>';
+                html += '<td class="text-success">' + formatMoney(stat.total) + '</td>';
+                html += '<td class="text-success">' + formatMoney(stat.total * 0.5) + '</td>';
+                html += '<td class="text-success">' + formatMoney(stat.total / stat.quantidade) + '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        function formatMoney(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function formatDateTime(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getPaymentMethodText(method) {
+            const methods = {
+                'dinheiro': 'Dinheiro',
+                'cartao_credito': 'Cartão Crédito',
+                'cartao_debito': 'Cartão Débito',
+                'pix': 'PIX',
+                'transferencia': 'Transferência'
+            };
+            return methods[method] || method || '-';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showAlert(message, type) {
+            let alertDiv = document.getElementById('alertMessage');
+            if (!alertDiv) {
+                alertDiv = document.createElement('div');
+                alertDiv.id = 'alertMessage';
+                alertDiv.className = 'alert hidden';
+                const mainContent = document.querySelector('.main-content .section');
+                if (mainContent) {
+                    mainContent.insertBefore(alertDiv, mainContent.firstChild);
+                }
+            }
+            alertDiv.textContent = message;
+            alertDiv.className = 'alert ' + type;
+            alertDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                alertDiv.classList.add('hidden');
+            }, 3000);
+        }
+
+        function showExpenseForm() {
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseFormContainer').classList.remove('hidden');
+            document.getElementById('expenseFormContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideExpenseForm() {
+            document.getElementById('expenseFormContainer').classList.add('hidden');
+            document.getElementById('expenseForm').reset();
+        }
+
+        function showExpensesList() {
+            renderExpensesTable();
+            document.getElementById('expensesListContainer').classList.remove('hidden');
+            document.getElementById('expensesListContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function refreshData() {
+            await loadExpenses();
+            await loadCompletedServices();
+            await loadBarbers();
+            updateSummaryCards();
+            updateCharts();
+            renderServicesTable();
+            renderBarberPerformance();
+            if (!document.getElementById('expensesListContainer').classList.contains('hidden')) {
+                renderExpensesTable();
+            }
+        }
+
+        function confirmDelete(id) {
+            pendingDeleteId = id;
+            document.getElementById('confirmMessage').textContent = 'Tem certeza que deseja excluir esta despesa?';
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        async function executeDelete() {
+            if (pendingDeleteId) {
+                await deleteExpense(pendingDeleteId);
+                pendingDeleteId = null;
+                closeConfirmModal();
+            }
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+            pendingDeleteId = null;
+        }
+
+        document.getElementById('periodSelect')?.addEventListener('change', (e) => {
+            const customPeriod = document.getElementById('customPeriod');
+            customPeriod.style.display = e.target.value === 'custom' ? 'flex' : 'none';
+            refreshData();
+        });
+        
+        document.getElementById('applyCustomDate')?.addEventListener('click', () => refreshData());
+        document.getElementById('addExpenseBtn')?.addEventListener('click', showExpenseForm);
+        document.getElementById('viewExpensesBtn')?.addEventListener('click', showExpensesList);
+        document.getElementById('closeExpensesBtn')?.addEventListener('click', () => {
+            document.getElementById('expensesListContainer').classList.add('hidden');
+        });
+        document.getElementById('cancelExpenseBtn')?.addEventListener('click', hideExpenseForm);
+        document.getElementById('confirmActionBtn')?.addEventListener('click', executeDelete);
+        
+        document.getElementById('expenseForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                categoria: document.getElementById('expenseCategory').value,
+                descricao: document.getElementById('expenseDescription').value,
+                valor: parseFloat(document.getElementById('expenseValue').value),
+                data_movimento: document.getElementById('expenseDate').value,
+                forma_pagamento: document.getElementById('expensePaymentMethod').value || null
+            };
+            
+            if (!formData.categoria || !formData.descricao || !formData.valor || !formData.data_movimento) {
+                showAlert('Preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+            
+            await saveExpense(formData);
+        });
+
+        window.logout = function() {
+            if (confirm('Deseja realmente sair?')) {
+                sessionStorage.clear();
+                window.location.href = 'login.html';
+            }
+        };
+        
+        window.confirmDelete = confirmDelete;
+        window.closeConfirmModal = closeConfirmModal;
+
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        if (!sessionStorage.getItem('barberflow_user')) {
+            window.location.href = 'login.html';
+        } else {
+            (async () => {
+                await getCurrentBarbearia();
+                await refreshData();
+            })();
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('menuToggle');
+            const overlay = document.getElementById('menuOverlay');
+            const menu = document.querySelector('.navbar');
+            
+            if (btn && menu) {
+                let menuAberto = false;
+                
+                function abrirMenu() {
+                    menu.style.left = '0px';
+                    menuAberto = true;
+                    if (overlay) overlay.style.display = 'block';
+                    btn.querySelector('i').className = 'fas fa-times';
+                }
+                
+                function fecharMenu() {
+                    menu.style.left = '-100%';
+                    menuAberto = false;
+                    if (overlay) overlay.style.display = 'none';
+                    btn.querySelector('i').className = 'fas fa-bars';
+                }
+                
+                btn.addEventListener('click', () => menuAberto ? fecharMenu() : abrirMenu());
+                if (overlay) overlay.addEventListener('click', fecharMenu);
+                
+                menu.style.position = 'fixed';
+                menu.style.left = '-100%';
+                menu.style.transition = 'left 0.3s';
+                if (overlay) overlay.style.display = 'none';
+                
+                function checkWidth() {
+                    if (window.innerWidth > 768) {
+                        btn.style.display = 'none';
+                        menu.style.position = 'static';
+                        menu.style.left = 'auto';
+                        if (menuAberto) fecharMenu();
+                    } else {
+                        btn.style.display = 'flex';
+                        menu.style.position = 'fixed';
+                        if (!menuAberto) menu.style.left = '-100%';
+                    }
+                }
+                
+                checkWidth();
+                window.addEventListener('resize', checkWidth);
+            }
+        });
+    </script>
+</body>
+</html>
