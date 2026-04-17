@@ -244,7 +244,7 @@
             <div class="logo-container">
                 <div class="logo">
                     <i class="fas fa-cut"></i>
-                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> </span></span></h1>
                 </div>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -260,6 +260,18 @@
             <div class="menu-overlay" id="menuOverlay"></div>
 
             <nav class="navbar">
+                <div class="mobile-user-info" id="mobileUserInfo">
+                    <div class="mobile-user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="mobile-user-details">
+                        <span id="mobileUserName">Carregando...</span>
+                        <span id="mobileBarbershopName" class="mobile-barbershop-name"></span>
+                    </div>
+                    <button onclick="logout()" class="mobile-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
                 <ul>
                     <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
                     <li><a href="agendamentos.html"><i class="fas fa-calendar-alt"></i> Agendamentos</a></li>
@@ -288,7 +300,6 @@
 
                 <div id="alertMessage" class="alert hidden"></div>
 
-                <!-- Formulário de serviço -->
                 <div id="serviceFormContainer" class="form-container hidden">
                     <h3 id="formTitle"><i class="fas fa-plus-circle"></i> Novo Serviço</h3>
 
@@ -332,7 +343,6 @@
                     </form>
                 </div>
 
-                <!-- Lista de serviços -->
                 <div class="table-responsive-container">
                     <div class="table-container">
                         <table id="servicesTable">
@@ -350,7 +360,7 @@
                             <tbody id="servicesTableBody">
                                 <tr><td colspan="7" style="text-align: center;">Carregando serviços...</td></tr>
                             </tbody>
-                         </table>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -362,25 +372,35 @@
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURAÇÃO SUPABASE
-        // ============================================
         const SUPABASE_URL = 'https://opmpodjqdxtpdolvrzln.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_RYuRxp9GWjfyEMwE3bjMCg_lYIJOg5a';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ============================================
-        // VARIÁVEIS GLOBAIS
-        // ============================================
         let currentBarbeariaId = null;
         let currentUser = null;
         let services = [];
         let editingServiceId = null;
 
-        // ============================================
-        // FUNÇÕES DE INICIALIZAÇÃO
-        // ============================================
-        
+        function updateMobileUserInfo() {
+            const userName = document.getElementById('userName')?.textContent || 'Usuário';
+            const barbershopName = document.getElementById('barbershopName')?.textContent || '';
+            
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileBarbershopName = document.getElementById('mobileBarbershopName');
+            
+            if (mobileUserName) {
+                mobileUserName.textContent = userName;
+            }
+            
+            if (mobileBarbershopName) {
+                if (barbershopName) {
+                    mobileBarbershopName.innerHTML = '<i class="fas fa-store"></i> ' + barbershopName;
+                } else {
+                    mobileBarbershopName.innerHTML = '';
+                }
+            }
+        }
+
         async function getCurrentBarbearia() {
             try {
                 const userStr = sessionStorage.getItem('barberflow_user');
@@ -419,10 +439,11 @@
                     userNameSpan.textContent = currentUser.email;
                 }
                 
+                updateMobileUserInfo();
                 return currentBarbeariaId;
             } catch (error) {
                 console.error('Erro ao buscar barbearia:', error);
-                showAlert('Erro ao carregar dados da barbearia', 'error');
+                showAlert('error', 'Erro ao carregar dados da barbearia');
                 return null;
             }
         }
@@ -439,10 +460,11 @@
                 
                 services = data || [];
                 renderServicesTable();
+                updateMobileUserInfo();
                 return services;
             } catch (error) {
                 console.error('Erro ao carregar serviços:', error);
-                showAlert('Erro ao carregar serviços', 'error');
+                showAlert('error', 'Erro ao carregar serviços');
                 return [];
             }
         }
@@ -474,14 +496,14 @@
                 
                 if (result.error) throw result.error;
                 
-                showAlert(editingServiceId ? 'Serviço atualizado!' : 'Serviço criado!', 'success');
+                showAlert('success', editingServiceId ? 'Serviço atualizado!' : 'Serviço criado!');
                 await loadServices();
                 hideForm();
                 editingServiceId = null;
                 return true;
             } catch (error) {
                 console.error('Erro ao salvar serviço:', error);
-                showAlert('Erro ao salvar serviço: ' + error.message, 'error');
+                showAlert('error', 'Erro ao salvar serviço: ' + error.message);
                 return false;
             }
         }
@@ -498,11 +520,11 @@
                 
                 if (error) throw error;
                 
-                showAlert('Serviço excluído!', 'success');
+                showAlert('success', 'Serviço excluído!');
                 await loadServices();
             } catch (error) {
                 console.error('Erro ao excluir serviço:', error);
-                showAlert('Erro ao excluir serviço', 'error');
+                showAlert('error', 'Erro ao excluir serviço');
             }
         }
 
@@ -518,18 +540,14 @@
                 
                 if (error) throw error;
                 
-                showAlert(`Serviço ${newStatus === 'ativo' ? 'ativado' : 'desativado'}!`, 'success');
+                showAlert('success', 'Serviço ' + (newStatus === 'ativo' ? 'ativado' : 'desativado') + '!');
                 await loadServices();
             } catch (error) {
                 console.error('Erro ao alterar status:', error);
-                showAlert('Erro ao alterar status do serviço', 'error');
+                showAlert('error', 'Erro ao alterar status do serviço');
             }
         }
 
-        // ============================================
-        // FUNÇÕES DE UI
-        // ============================================
-        
         function renderServicesTable() {
             const tbody = document.getElementById('servicesTableBody');
             const searchTerm = document.getElementById('searchService')?.value.toLowerCase() || '';
@@ -547,31 +565,23 @@
                 return;
             }
             
-            tbody.innerHTML = filteredServices.map(service => `
-                <tr>
-                    <td><strong>${escapeHtml(service.nome)}</strong></td>
-                    <td>${escapeHtml(service.descricao || '-')}</td>
-                    <td style="color: #28a745; font-weight: bold;">${formatMoney(service.preco)}</td>
-                    <td>${service.duracao_minutos} min</td>
-                    <td>${service.comissao_barbeiro || 50}%</td>
-                    <td>
-                        <span class="status-badge ${service.status === 'ativo' ? 'status-active' : 'status-inactive'}">
-                            ${service.status === 'ativo' ? 'Ativo' : 'Inativo'}
-                        </span>
-                    </td>
-                    <td class="action-buttons">
-                        <button class="btn btn-warning btn-sm" onclick="editService('${service.id}')">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteService('${service.id}')">
-                            <i class="fas fa-trash"></i> Excluir
-                        </button>
-                        <button class="btn btn-secondary btn-sm" onclick="toggleServiceStatus('${service.id}', '${service.status}')">
-                            <i class="fas fa-${service.status === 'ativo' ? 'ban' : 'check-circle'}"></i> ${service.status === 'ativo' ? 'Desativar' : 'Ativar'}
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+            let html = '';
+            for (const service of filteredServices) {
+                html += '<tr>';
+                html += '<td><strong>' + escapeHtml(service.nome) + '</strong></td>';
+                html += '<td>' + escapeHtml(service.descricao || '-') + '</td>';
+                html += '<td style="color: #28a745; font-weight: bold;">' + formatMoney(service.preco) + '</td>';
+                html += '<td>' + service.duracao_minutos + ' min</td>';
+                html += '<td>' + (service.comissao_barbeiro || 50) + '%</td>';
+                html += '<td><span class="status-badge ' + (service.status === 'ativo' ? 'status-active' : 'status-inactive') + '">' + (service.status === 'ativo' ? 'Ativo' : 'Inativo') + '</span></td>';
+                html += '<td class="action-buttons">';
+                html += '<button class="btn btn-warning btn-sm" onclick="editService(\'' + service.id + '\')"><i class="fas fa-edit"></i> Editar</button>';
+                html += '<button class="btn btn-danger btn-sm" onclick="deleteService(\'' + service.id + '\')"><i class="fas fa-trash"></i> Excluir</button>';
+                html += '<button class="btn btn-secondary btn-sm" onclick="toggleServiceStatus(\'' + service.id + '\', \'' + service.status + '\')"><i class="fas fa-' + (service.status === 'ativo' ? 'ban' : 'check-circle') + '"></i> ' + (service.status === 'ativo' ? 'Desativar' : 'Ativar') + '</button>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
         }
 
         function editService(id) {
@@ -607,10 +617,10 @@
             editingServiceId = null;
         }
 
-        function showAlert(message, type) {
+        function showAlert(type, message) {
             const alertDiv = document.getElementById('alertMessage');
             alertDiv.textContent = message;
-            alertDiv.className = `alert alert-${type}`;
+            alertDiv.className = 'alert alert-' + type;
             alertDiv.classList.remove('hidden');
             
             setTimeout(() => {
@@ -632,10 +642,6 @@
             return div.innerHTML;
         }
 
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-        
         document.getElementById('serviceForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -649,17 +655,17 @@
             };
             
             if (!formData.nome) {
-                showAlert('Nome do serviço é obrigatório', 'error');
+                showAlert('error', 'Nome do serviço é obrigatório');
                 return;
             }
             
             if (isNaN(formData.preco) || formData.preco <= 0) {
-                showAlert('Preço deve ser maior que zero', 'error');
+                showAlert('error', 'Preço deve ser maior que zero');
                 return;
             }
             
             if (isNaN(formData.duracao_minutos) || formData.duracao_minutos < 5) {
-                showAlert('Duração deve ser de pelo menos 5 minutos', 'error');
+                showAlert('error', 'Duração deve ser de pelo menos 5 minutos');
                 return;
             }
             
@@ -691,10 +697,6 @@
             renderServicesTable();
         });
 
-        // ============================================
-        // FUNÇÕES GLOBAIS
-        // ============================================
-        
         window.logout = function() {
             if (confirm('Deseja realmente sair do sistema?')) {
                 sessionStorage.clear();
@@ -706,10 +708,6 @@
         window.deleteService = deleteService;
         window.toggleServiceStatus = toggleServiceStatus;
 
-        // ============================================
-        // INICIALIZAÇÃO
-        // ============================================
-        
         document.getElementById('currentYear').textContent = new Date().getFullYear();
         
         if (!sessionStorage.getItem('barberflow_user')) {
@@ -721,37 +719,36 @@
             })();
         }
         
-        // Menu hambúrguer
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('menuToggle');
             const overlay = document.getElementById('menuOverlay');
             const menu = document.querySelector('.navbar');
-            
+
             if (btn && menu) {
                 let menuAberto = false;
-                
+
                 function abrirMenu() {
                     menu.style.left = '0px';
                     menuAberto = true;
                     if (overlay) overlay.style.display = 'block';
                     btn.querySelector('i').className = 'fas fa-times';
                 }
-                
+
                 function fecharMenu() {
-                    menu.style.left = '-280px';
+                    menu.style.left = '-100%';
                     menuAberto = false;
                     if (overlay) overlay.style.display = 'none';
                     btn.querySelector('i').className = 'fas fa-bars';
                 }
-                
+
                 btn.addEventListener('click', () => menuAberto ? fecharMenu() : abrirMenu());
                 if (overlay) overlay.addEventListener('click', fecharMenu);
-                
+
                 menu.style.position = 'fixed';
-                menu.style.left = '-280px';
+                menu.style.left = '-100%';
                 menu.style.transition = 'left 0.3s';
                 if (overlay) overlay.style.display = 'none';
-                
+
                 function checkWidth() {
                     if (window.innerWidth > 768) {
                         btn.style.display = 'none';
@@ -761,10 +758,10 @@
                     } else {
                         btn.style.display = 'flex';
                         menu.style.position = 'fixed';
-                        if (!menuAberto) menu.style.left = '-280px';
+                        if (!menuAberto) menu.style.left = '-100%';
                     }
                 }
-                
+
                 checkWidth();
                 window.addEventListener('resize', checkWidth);
             }

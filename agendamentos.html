@@ -15,7 +15,6 @@
             box-sizing: border-box;
         }
 
-        /* Estilos do Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -178,7 +177,6 @@
             font-size: 12px;
         }
 
-        /* Link para cadastrar novo cliente */
         .new-client-link {
             display: inline-block;
             margin-top: 8px;
@@ -197,7 +195,7 @@
         .new-client-link:hover {
             background: linear-gradient(135deg, #1e7e34 0%, #155724 100%);
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .new-client-link i {
@@ -205,7 +203,6 @@
             font-size: 11px;
         }
 
-        /* Badge da barbearia no cabeçalho */
         .barbershop-badge {
             background: #3498db;
             color: white;
@@ -218,13 +215,12 @@
             gap: 6px;
         }
 
-        /* Estilos da agenda */
         .calendar-container {
             overflow-x: auto;
             margin-top: 20px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .calendar-week-header {
@@ -237,7 +233,8 @@
             min-width: 800px;
         }
 
-        .calendar-time-column, .calendar-day {
+        .calendar-time-column,
+        .calendar-day {
             padding: 15px 8px;
             text-align: center;
             border-right: 1px solid #333;
@@ -254,7 +251,7 @@
         .calendar-hour-row {
             display: grid;
             grid-template-columns: 80px repeat(7, 1fr);
-            min-height: 80px;
+            min-height: 60px;
             border-bottom: 1px solid #dee2e6;
         }
 
@@ -273,7 +270,7 @@
         .calendar-slot {
             border-right: 1px solid #dee2e6;
             padding: 4px;
-            min-height: 80px;
+            min-height: 60px;
             position: relative;
         }
 
@@ -284,10 +281,10 @@
         .appointment-card-calendar {
             background: #3498db;
             color: white;
-            padding: 6px;
+            padding: 4px;
             border-radius: 4px;
-            font-size: 11px;
-            margin-bottom: 4px;
+            font-size: 10px;
+            margin-bottom: 2px;
             cursor: pointer;
             transition: transform 0.2s;
         }
@@ -297,9 +294,18 @@
             background: #2980b9;
         }
 
-        .appointment-card-calendar.concluido { background: #28a745; }
-        .appointment-card-calendar.cancelado { background: #dc3545; }
-        .appointment-card-calendar.confirmado { background: #ffc107; color: #333; }
+        .appointment-card-calendar.concluido {
+            background: #28a745;
+        }
+
+        .appointment-card-calendar.cancelado {
+            background: #dc3545;
+        }
+
+        .appointment-card-calendar.confirmado {
+            background: #ffc107;
+            color: #333;
+        }
 
         .appointments-list {
             margin-top: 20px;
@@ -311,7 +317,7 @@
             padding: 15px;
             margin-bottom: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: transform 0.2s;
             display: flex;
@@ -335,16 +341,28 @@
             margin-bottom: 20px;
         }
 
-        .alert.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert.hidden { display: none; }
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.hidden {
+            display: none;
+        }
 
         .form-container {
             background: white;
             padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .form-group {
@@ -364,10 +382,18 @@
             border-radius: 4px;
         }
 
-        .mt-20 { margin-top: 20px; }
-        .mt-30 { margin-top: 30px; }
-        .hidden { display: none; }
-        
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mt-30 {
+            margin-top: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
         .status-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -375,12 +401,27 @@
             font-size: 12px;
             font-weight: bold;
         }
-        
-        .status-agendado { background: #e3f2fd; color: #1565c0; }
-        .status-confirmado { background: #e8f5e9; color: #2e7d32; }
-        .status-concluido { background: #f3e5f5; color: #7b1fa2; }
-        .status-cancelado { background: #ffebee; color: #c62828; }
-        
+
+        .status-agendado {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-confirmado {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-concluido {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .status-cancelado {
+            background: #ffebee;
+            color: #c62828;
+        }
+
         .btn-calendar {
             background: #333;
             color: white;
@@ -390,11 +431,11 @@
             border-radius: 50%;
             cursor: pointer;
         }
-        
+
         .btn-calendar:hover {
             background: #555;
         }
-        
+
         .week-range {
             font-weight: bold;
             min-width: 200px;
@@ -449,9 +490,251 @@
             flex-wrap: wrap;
         }
 
+        /* ============================================
+           MENU HAMBÚRGUER RESPONSIVO
+           ============================================ */
+
+        /* Botão hambúrguer - visível apenas em mobile */
+        .menu-toggle {
+            display: none;
+            background: #333;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .menu-toggle:hover {
+            background: #555;
+        }
+
+        /* Menu lateral para mobile */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100vh;
+            background: #111;
+            z-index: 1000;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+            display: block;
+        }
+
+        /* Quando o menu está aberto */
+        .navbar.active {
+            left: 0;
+        }
+
+        /* Informações do usuário no mobile */
+        .mobile-user-info {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .mobile-user-avatar {
+            width: 50px;
+            height: 50px;
+            background: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-user-avatar i {
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .mobile-user-details {
+            flex: 1;
+        }
+
+        .mobile-user-details span {
+            display: block;
+        }
+
+        #mobileUserName {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .mobile-barbershop-name {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        .mobile-barbershop-name i {
+            margin-right: 5px;
+            color: #3498db;
+        }
+
+        .mobile-logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mobile-logout-btn:hover {
+            background: #c82333;
+        }
+
+        /* Links do menu mobile */
+        .navbar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .navbar li {
+            border-bottom: 1px solid #222;
+        }
+
+        .navbar a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .navbar a:hover,
+        .navbar a.active {
+            background: #222;
+            color: white;
+            border-left: 4px solid white;
+            padding-left: 16px;
+        }
+
+        .navbar a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Overlay quando menu está aberto */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        /* ============================================
+           RESPONSIVIDADE
+           ============================================ */
+
+        /* Mobile (até 768px) */
         @media (max-width: 768px) {
-            .calendar-week-header, .calendar-week-body {
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .logo-container {
+                padding-right: 70px;
+                position: relative;
+            }
+            
+            /* Esconder user-info do desktop no mobile */
+            .user-info {
+                display: none !important;
+            }
+            
+            .logo h1 {
+                font-size: 1.4rem;
+            }
+            
+            .logo i {
+                font-size: 1.8rem;
+            }
+
+            .calendar-week-header,
+            .calendar-week-body {
                 min-width: 700px;
+            }
+        }
+
+        /* Desktop (acima de 768px) */
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none !important;
+            }
+            
+            .navbar {
+                position: static;
+                width: auto;
+                height: auto;
+                background: #111;
+                box-shadow: none;
+                overflow: visible;
+            }
+            
+            .navbar ul {
+                display: flex;
+                padding: 0 30px;
+            }
+            
+            .navbar li {
+                flex: 1;
+                border-bottom: none;
+            }
+            
+            .navbar a {
+                justify-content: center;
+                padding: 15px 20px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            
+            .navbar a:hover,
+            .navbar a.active {
+                border-left: none;
+                border-bottom: 3px solid white;
+                padding-left: 20px;
+            }
+            
+            .mobile-user-info {
+                display: none !important;
+            }
+            
+            .menu-overlay {
+                display: none !important;
             }
         }
     </style>
@@ -463,7 +746,7 @@
             <div class="logo-container">
                 <div class="logo">
                     <i class="fas fa-cut"></i>
-                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> </span></h1>
                 </div>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -479,6 +762,18 @@
             <div class="menu-overlay" id="menuOverlay"></div>
 
             <nav class="navbar">
+                <div class="mobile-user-info" id="mobileUserInfo">
+                    <div class="mobile-user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="mobile-user-details">
+                        <span id="mobileUserName">Carregando...</span>
+                        <span id="mobileBarbershopName" class="mobile-barbershop-name"></span>
+                    </div>
+                    <button onclick="logout()" class="mobile-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
                 <ul>
                     <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
                     <li><a href="agendamentos.html" class="active"><i class="fas fa-calendar-alt"></i> Agendamentos</a></li>
@@ -506,7 +801,6 @@
 
                 <div id="alertMessage" class="alert hidden"></div>
 
-                <!-- Formulário de novo agendamento -->
                 <div id="appointmentFormContainer" class="form-container hidden">
                     <h3><i class="fas fa-calendar-plus"></i> Novo Agendamento</h3>
                     <form id="appointmentForm">
@@ -568,10 +862,9 @@
                     </form>
                 </div>
 
-                <!-- FILTROS -->
                 <div class="section mt-20" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
                     <h4><i class="fas fa-filter"></i> Filtros</h4>
-                    
+
                     <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <strong>Filtrar por Barbeiro:</strong>
@@ -594,7 +887,6 @@
                     </div>
                 </div>
 
-                <!-- Agenda Visual -->
                 <div class="calendar-container">
                     <div class="calendar-week-header" id="calendarWeekHeader">
                         <div class="calendar-time-column">Horário</div>
@@ -609,7 +901,6 @@
                     <div class="calendar-week-body" id="calendarWeekBody"></div>
                 </div>
 
-                <!-- Lista de agendamentos -->
                 <div class="section mt-30">
                     <h3><i class="fas fa-list"></i> Lista de Agendamentos</h3>
                     <div class="appointments-list" id="appointmentsList"></div>
@@ -622,7 +913,6 @@
         </footer>
     </div>
 
-    <!-- Modal para detalhes do agendamento -->
     <div id="appointmentModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -656,16 +946,10 @@
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURAÇÃO SUPABASE
-        // ============================================
         const SUPABASE_URL = 'https://opmpodjqdxtpdolvrzln.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_RYuRxp9GWjfyEMwE3bjMCg_lYIJOg5a';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ============================================
-        // VARIÁVEIS GLOBAIS
-        // ============================================
         let currentBarbeariaId = null;
         let currentUser = null;
         let allAppointments = [];
@@ -679,10 +963,26 @@
         let customStartDate = null;
         let customEndDate = null;
 
-        // ============================================
-        // FUNÇÕES DE INICIALIZAÇÃO
-        // ============================================
-        
+        function updateMobileUserInfo() {
+            const userName = document.getElementById('userName')?.textContent || 'Usuário';
+            const barbershopName = document.getElementById('barbershopName')?.textContent || '';
+            
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileBarbershopName = document.getElementById('mobileBarbershopName');
+            
+            if (mobileUserName) {
+                mobileUserName.textContent = userName;
+            }
+            
+            if (mobileBarbershopName) {
+                if (barbershopName) {
+                    mobileBarbershopName.innerHTML = `<i class="fas fa-store"></i> ${barbershopName}`;
+                } else {
+                    mobileBarbershopName.innerHTML = '';
+                }
+            }
+        }
+
         async function getCurrentBarbearia() {
             try {
                 const userStr = sessionStorage.getItem('barberflow_user');
@@ -690,22 +990,22 @@
                     window.location.href = 'login.html';
                     return null;
                 }
-                
+
                 currentUser = JSON.parse(userStr);
-                
+
                 if (currentUser.barbearia_id) {
                     const { data: barbearia, error } = await supabaseClient
                         .from('barbearias')
                         .select('*')
                         .eq('id', currentUser.barbearia_id)
                         .single();
-                    
+
                     if (error) throw error;
-                    
+
                     currentBarbeariaId = barbearia.id;
                     sessionStorage.setItem('currentBarbeariaId', barbearia.id);
                     sessionStorage.setItem('currentBarbeariaName', barbearia.nome);
-                    
+
                     const badge = document.getElementById('barbershopBadge');
                     const nameSpan = document.getElementById('barbershopName');
                     if (barbearia.nome && badge && nameSpan) {
@@ -713,14 +1013,15 @@
                         badge.style.display = 'inline-flex';
                     }
                 }
-                
+
                 const userNameSpan = document.getElementById('userName');
                 if (userNameSpan && currentUser.nome) {
                     userNameSpan.textContent = currentUser.nome;
                 } else if (userNameSpan && currentUser.email) {
                     userNameSpan.textContent = currentUser.email;
                 }
-                
+
+                updateMobileUserInfo();
                 return currentBarbeariaId;
             } catch (error) {
                 console.error('Erro ao buscar barbearia:', error);
@@ -737,18 +1038,25 @@
                 loadBarbers(),
                 loadAppointments()
             ]);
-            
+
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+            const monday = new Date(today);
+            monday.setDate(today.getDate() + diffToMonday);
+            currentWeekStart = monday;
+
             setupWeekNavigation();
             updateCalendarDays();
             renderWeekCalendar();
             renderAppointmentsList();
             populateFilters();
-            
-            // Configurar datas padrão para filtro
-            const today = new Date();
+
             const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('filterStartDate').value = firstDayOfMonth.toISOString().split('T')[0];
             document.getElementById('filterEndDate').value = today.toISOString().split('T')[0];
+            
+            updateMobileUserInfo();
         }
 
         async function loadClients() {
@@ -759,7 +1067,7 @@
                     .eq('barbearia_id', currentBarbeariaId)
                     .eq('status', 'ativo')
                     .order('nome');
-                
+
                 if (error) throw error;
                 clients = data || [];
                 populateClientSelect();
@@ -778,7 +1086,7 @@
                     .eq('barbearia_id', currentBarbeariaId)
                     .eq('status', 'ativo')
                     .order('nome');
-                
+
                 if (error) throw error;
                 services = data || [];
                 populateServiceSelect();
@@ -797,7 +1105,7 @@
                     .eq('barbearia_id', currentBarbeariaId)
                     .eq('status', 'ativo')
                     .order('nome');
-                
+
                 if (error) throw error;
                 barbers = data || [];
                 populateBarberSelect();
@@ -820,19 +1128,19 @@
                         servicos (id, nome, preco)
                     `)
                     .eq('barbearia_id', currentBarbeariaId);
-                
+
                 const barberFilter = document.getElementById('barberFilter')?.value;
                 if (barberFilter) {
                     query = query.eq('barbeiro_id', barberFilter);
                 }
-                
+
                 if (customStartDate && customEndDate) {
                     query = query.gte('data_hora', customStartDate + 'T00:00:00');
                     query = query.lte('data_hora', customEndDate + 'T23:59:59');
                 }
-                
+
                 const { data, error } = await query.order('data_hora', { ascending: true });
-                
+
                 if (error) throw error;
                 allAppointments = data || [];
                 filteredAppointments = [...allAppointments];
@@ -850,12 +1158,12 @@
                     appointmentData.barbeiro_id,
                     appointmentData.data_hora
                 );
-                
+
                 if (!isAvailable && !editingAppointmentId) {
                     showAlert('Horário indisponível! Escolha outro horário.', 'error');
                     return false;
                 }
-                
+
                 let result;
                 if (editingAppointmentId) {
                     result = await supabaseClient
@@ -870,9 +1178,9 @@
                             barbearia_id: currentBarbeariaId
                         }]);
                 }
-                
+
                 if (result.error) throw result.error;
-                
+
                 showAlert(editingAppointmentId ? 'Agendamento atualizado!' : 'Agendamento criado!', 'success');
                 await loadAppointments();
                 updateCalendarDays();
@@ -890,15 +1198,15 @@
 
         async function deleteAppointment(id) {
             if (!confirm('Tem certeza que deseja EXCLUIR este agendamento?')) return;
-            
+
             try {
                 const { error } = await supabaseClient
                     .from('agendamentos')
                     .delete()
                     .eq('id', id);
-                
+
                 if (error) throw error;
-                
+
                 showAlert('Agendamento excluído permanentemente!', 'success');
                 await loadAppointments();
                 updateCalendarDays();
@@ -913,15 +1221,15 @@
 
         async function cancelAppointment(id) {
             if (!confirm('Tem certeza que deseja CANCELAR este agendamento?')) return;
-            
+
             try {
                 const { error } = await supabaseClient
                     .from('agendamentos')
                     .update({ status: 'cancelado' })
                     .eq('id', id);
-                
+
                 if (error) throw error;
-                
+
                 showAlert('Agendamento cancelado!', 'success');
                 await loadAppointments();
                 updateCalendarDays();
@@ -936,15 +1244,15 @@
 
         async function completeAppointment(id) {
             if (!confirm('Marcar este agendamento como concluído?')) return;
-            
+
             try {
                 const { error } = await supabaseClient
                     .from('agendamentos')
                     .update({ status: 'concluido' })
                     .eq('id', id);
-                
+
                 if (error) throw error;
-                
+
                 showAlert('Agendamento concluído!', 'success');
                 await loadAppointments();
                 updateCalendarDays();
@@ -959,15 +1267,15 @@
 
         async function confirmAppointment(id) {
             if (!confirm('Confirmar este agendamento?')) return;
-            
+
             try {
                 const { error } = await supabaseClient
                     .from('agendamentos')
                     .update({ status: 'confirmado' })
                     .eq('id', id);
-                
+
                 if (error) throw error;
-                
+
                 showAlert('Agendamento confirmado!', 'success');
                 await loadAppointments();
                 updateCalendarDays();
@@ -988,13 +1296,13 @@
                     .eq('barbeiro_id', barberId)
                     .eq('data_hora', datetime)
                     .neq('status', 'cancelado');
-                
+
                 if (error) throw error;
-                
+
                 if (editingAppointmentId) {
                     return data.filter(a => a.id !== editingAppointmentId).length === 0;
                 }
-                
+
                 return data.length === 0;
             } catch (error) {
                 console.error('Erro ao verificar disponibilidade:', error);
@@ -1005,7 +1313,7 @@
         function populateClientSelect() {
             const select = document.getElementById('clientSelect');
             if (!select) return;
-            
+
             select.innerHTML = '<option value="">Selecione um cliente</option>' +
                 clients.map(c => `<option value="${c.id}">${c.nome} - ${c.telefone}</option>`).join('');
         }
@@ -1013,7 +1321,7 @@
         function populateServiceSelect() {
             const select = document.getElementById('serviceSelect');
             if (!select) return;
-            
+
             select.innerHTML = '<option value="">Selecione um serviço</option>' +
                 services.map(s => `<option value="${s.id}">${s.nome} - R$ ${s.preco} (${s.duracao_minutos}min)</option>`).join('');
         }
@@ -1021,7 +1329,7 @@
         function populateBarberSelect() {
             const select = document.getElementById('barberSelect');
             if (!select) return;
-            
+
             select.innerHTML = '<option value="">Selecione um barbeiro</option>' +
                 barbers.map(b => `<option value="${b.id}">${b.nome} - ${b.especialidade || ''}</option>`).join('');
         }
@@ -1029,7 +1337,7 @@
         function populateBarberFilter() {
             const select = document.getElementById('barberFilter');
             if (!select) return;
-            
+
             select.innerHTML = '<option value="">Todos os Barbeiros</option>' +
                 barbers.map(b => `<option value="${b.id}">${b.nome}</option>`).join('');
         }
@@ -1042,7 +1350,7 @@
             const prevBtn = document.getElementById('prevWeek');
             const nextBtn = document.getElementById('nextWeek');
             const todayBtn = document.getElementById('todayBtn');
-            
+
             if (prevBtn) prevBtn.onclick = () => changeWeek(-1);
             if (nextBtn) nextBtn.onclick = () => changeWeek(1);
             if (todayBtn) todayBtn.onclick = () => goToToday();
@@ -1056,8 +1364,12 @@
         }
 
         function goToToday() {
-            currentWeekStart = new Date();
-            currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+            const monday = new Date(today);
+            monday.setDate(today.getDate() + diffToMonday);
+            currentWeekStart = monday;
             updateCalendarDays();
             renderWeekCalendar();
             renderAppointmentsList();
@@ -1067,31 +1379,44 @@
             const start = new Date(currentWeekStart);
             const end = new Date(currentWeekStart);
             end.setDate(end.getDate() + 6);
-            
-            const options = { day: '2-digit', month: '2-digit' };
-            return `${start.toLocaleDateString('pt-BR', options)} - ${end.toLocaleDateString('pt-BR', options)}`;
+
+            const options = { day: '2-digit', month: 'long' };
+            const startStr = start.toLocaleDateString('pt-BR', options);
+            const endStr = end.toLocaleDateString('pt-BR', options);
+            return `${startStr} - ${endStr}`;
         }
 
         function updateCalendarDays() {
             const weekStart = new Date(currentWeekStart);
             const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
             const dayElements = document.querySelectorAll('.calendar-day');
+            const today = new Date();
             
             if (dayElements.length === 0) return;
             
             dayElements.forEach((element, index) => {
-                const currentDate = new Date(weekStart);
-                currentDate.setDate(weekStart.getDate() + index);
+                const date = new Date(weekStart);
+                date.setDate(weekStart.getDate() + index);
                 
                 const dayName = days[index];
-                const dayNumber = currentDate.getDate();
-                const month = currentDate.getMonth() + 1;
+                const dayNumber = date.getDate();
+                const month = date.getMonth() + 1;
+                const year = date.getFullYear();
+                
+                const isToday = date.toDateString() === today.toDateString();
                 
                 element.innerHTML = `
                     <div style="font-weight: bold; font-size: 0.9rem;">${dayName}</div>
-                    <div style="font-size: 1.2rem; font-weight: bold; margin: 5px 0;">${dayNumber}</div>
-                    <div style="font-size: 0.75rem; opacity: 0.8;">${month.toString().padStart(2, '0')}</div>
+                    <div style="font-size: 1.2rem; font-weight: bold; margin: 5px 0; ${isToday ? 'color: #ffc107;' : ''}">${dayNumber}</div>
+                    <div style="font-size: 0.7rem; opacity: 0.8;">${month.toString().padStart(2, '0')}/${year}</div>
                 `;
+                
+                if (isToday) {
+                    element.style.backgroundColor = '#333';
+                    element.style.borderRadius = '8px';
+                } else {
+                    element.style.backgroundColor = 'transparent';
+                }
             });
             
             const weekRange = getWeekRange();
@@ -1101,38 +1426,46 @@
         function renderWeekCalendar() {
             const container = document.getElementById('calendarWeekBody');
             if (!container) return;
-            
-            const hours = Array.from({ length: 14 }, (_, i) => i + 8);
+
+            const timeSlots = [];
+            for (let hour = 8; hour <= 20; hour++) {
+                timeSlots.push(`${hour.toString().padStart(2, '0')}:00`);
+                timeSlots.push(`${hour.toString().padStart(2, '0')}:30`);
+            }
+            timeSlots.push('21:00');
+
             const days = [0, 1, 2, 3, 4, 5, 6];
-            
+
             container.innerHTML = '';
-            
-            for (const hour of hours) {
+
+            for (const timeSlot of timeSlots) {
+                const [hour, minute] = timeSlot.split(':').map(Number);
                 const hourRow = document.createElement('div');
                 hourRow.className = 'calendar-hour-row';
-                
+
                 const hourLabel = document.createElement('div');
                 hourLabel.className = 'hour-label';
-                hourLabel.textContent = `${hour.toString().padStart(2, '0')}:00`;
+                hourLabel.textContent = timeSlot;
                 hourRow.appendChild(hourLabel);
-                
+
                 for (const dayOffset of days) {
                     const date = new Date(currentWeekStart);
                     date.setDate(date.getDate() + dayOffset);
-                    date.setHours(hour, 0, 0);
-                    
+                    date.setHours(hour, minute, 0);
+
                     const slot = document.createElement('div');
                     slot.className = 'calendar-slot';
                     slot.onclick = () => openFormForSlot(date.toISOString());
-                    
-                    const appointmentsAtHour = filteredAppointments.filter(a => {
+
+                    const appointmentsAtSlot = filteredAppointments.filter(a => {
                         if (!a.data_hora) return false;
                         const aptDate = new Date(a.data_hora);
                         return aptDate.toDateString() === date.toDateString() &&
-                               aptDate.getHours() === hour;
+                            aptDate.getHours() === hour &&
+                            aptDate.getMinutes() === minute;
                     });
-                    
-                    for (const apt of appointmentsAtHour) {
+
+                    for (const apt of appointmentsAtSlot) {
                         const eventDiv = document.createElement('div');
                         eventDiv.className = `appointment-card-calendar ${apt.status}`;
                         eventDiv.onclick = (e) => {
@@ -1140,16 +1473,16 @@
                             viewAppointmentDetails(apt.id);
                         };
                         eventDiv.innerHTML = `
-                            <strong>${apt.clientes?.nome || 'Cliente'}</strong><br>
-                            ${apt.servicos?.nome || 'Serviço'}<br>
-                            ${apt.barbeiros?.nome || 'Barbeiro'}
+                            <strong>${apt.clientes?.nome?.substring(0, 12) || 'Cliente'}</strong><br>
+                            ${apt.servicos?.nome?.substring(0, 10) || 'Serviço'}<br>
+                            ${apt.barbeiros?.nome?.substring(0, 8) || 'Barbeiro'}
                         `;
                         slot.appendChild(eventDiv);
                     }
-                    
+
                     hourRow.appendChild(slot);
                 }
-                
+
                 container.appendChild(hourRow);
             }
         }
@@ -1157,14 +1490,14 @@
         function renderAppointmentsList() {
             const container = document.getElementById('appointmentsList');
             if (!container) return;
-            
+
             const appointmentsToShow = filteredAppointments.length > 0 ? filteredAppointments : allAppointments;
-            
+
             if (appointmentsToShow.length === 0) {
                 container.innerHTML = '<p style="text-align: center; padding: 40px;">Nenhum agendamento encontrado</p>';
                 return;
             }
-            
+
             container.innerHTML = appointmentsToShow.map(apt => {
                 return `
                     <div class="appointment-item" onclick="viewAppointmentDetails('${apt.id}')">
@@ -1202,32 +1535,32 @@
         async function applyDateFilter() {
             const startDate = document.getElementById('filterStartDate').value;
             const endDate = document.getElementById('filterEndDate').value;
-            
+
             if (!startDate || !endDate) {
                 showAlert('Selecione as datas de início e fim', 'error');
                 return;
             }
-            
+
             customStartDate = startDate;
             customEndDate = endDate;
-            
+
             await loadAppointments();
             updateCalendarDays();
             renderWeekCalendar();
             renderAppointmentsList();
-            
+
             showAlert(`Filtrando agendamentos de ${formatDate(startDate)} até ${formatDate(endDate)}`, 'success');
         }
 
         function clearDateFilter() {
             customStartDate = null;
             customEndDate = null;
-            
+
             const today = new Date();
             const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('filterStartDate').value = firstDayOfMonth.toISOString().split('T')[0];
             document.getElementById('filterEndDate').value = today.toISOString().split('T')[0];
-            
+
             loadAppointments().then(() => {
                 updateCalendarDays();
                 renderWeekCalendar();
@@ -1239,9 +1572,9 @@
         function viewAppointmentDetails(id) {
             const appointment = allAppointments.find(a => a.id === id);
             if (!appointment) return;
-            
+
             selectedAppointmentId = id;
-            
+
             document.getElementById('modalClientName').textContent = appointment.clientes?.nome || 'N/A';
             document.getElementById('modalServiceName').textContent = appointment.servicos?.nome || 'N/A';
             document.getElementById('modalBarber').textContent = appointment.barbeiros?.nome || 'N/A';
@@ -1249,7 +1582,7 @@
             document.getElementById('modalStatus').innerHTML = `<span class="status-badge status-${appointment.status}">${getStatusText(appointment.status)}</span>`;
             document.getElementById('modalValue').textContent = formatMoney(appointment.valor_total);
             document.getElementById('modalNotes').textContent = appointment.observacoes || 'Nenhuma';
-            
+
             const modal = document.getElementById('appointmentModal');
             modal.classList.remove('hidden');
         }
@@ -1276,19 +1609,19 @@
         function editAppointment(id) {
             const appointment = allAppointments.find(a => a.id === id);
             if (!appointment) return;
-            
+
             editingAppointmentId = id;
-            
+
             document.getElementById('clientSelect').value = appointment.cliente_id;
             document.getElementById('serviceSelect').value = appointment.servico_id;
             document.getElementById('barberSelect').value = appointment.barbeiro_id;
-            
+
             const date = new Date(appointment.data_hora);
             document.getElementById('appointmentDate').value = date.toISOString().split('T')[0];
             document.getElementById('appointmentTime').value = date.toTimeString().slice(0, 5);
             document.getElementById('appointmentStatus').value = appointment.status;
             document.getElementById('appointmentNotes').value = appointment.observacoes || '';
-            
+
             showForm();
         }
 
@@ -1317,7 +1650,7 @@
             alertDiv.textContent = message;
             alertDiv.className = `alert ${type}`;
             alertDiv.classList.remove('hidden');
-            
+
             setTimeout(() => {
                 alertDiv.classList.add('hidden');
             }, 3000);
@@ -1339,7 +1672,7 @@
         function formatDateTime(datetime) {
             if (!datetime) return 'Data inválida';
             const date = new Date(datetime);
-            return date.toLocaleString('pt-BR');
+            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
         function getStatusText(status) {
@@ -1352,14 +1685,10 @@
             return statusMap[status] || status;
         }
 
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-        
         document.getElementById('appointmentForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const formData = {
                 cliente_id: document.getElementById('clientSelect').value,
                 servico_id: document.getElementById('serviceSelect').value,
@@ -1369,12 +1698,12 @@
                 observacoes: document.getElementById('appointmentNotes').value,
                 valor_total: services.find(s => s.id === document.getElementById('serviceSelect').value)?.preco || 0
             };
-            
+
             if (!formData.cliente_id || !formData.servico_id || !formData.barbeiro_id) {
                 showAlert('Preencha todos os campos obrigatórios', 'error');
                 return;
             }
-            
+
             await saveAppointment(formData);
         });
 
@@ -1384,7 +1713,7 @@
             document.getElementById('appointmentForm').reset();
             showForm();
         });
-        
+
         document.getElementById('clearFiltersBtn')?.addEventListener('click', async () => {
             document.getElementById('barberFilter').value = '';
             await loadAppointments();
@@ -1392,7 +1721,7 @@
             renderWeekCalendar();
             renderAppointmentsList();
         });
-        
+
         document.getElementById('barberFilter')?.addEventListener('change', async () => {
             await loadAppointments();
             updateCalendarDays();
@@ -1403,21 +1732,17 @@
         document.getElementById('applyDateFilter')?.addEventListener('click', applyDateFilter);
         document.getElementById('clearDateFilter')?.addEventListener('click', clearDateFilter);
 
-        // ============================================
-        // FUNÇÕES GLOBAIS
-        // ============================================
-        
-        window.logout = function() {
+        window.logout = function () {
             sessionStorage.clear();
             window.location.href = 'login.html';
         };
-        
-        window.closeModal = function() {
+
+        window.closeModal = function () {
             const modal = document.getElementById('appointmentModal');
             if (modal) modal.classList.add('hidden');
             selectedAppointmentId = null;
         };
-        
+
         window.editSelectedAppointment = editSelectedAppointment;
         window.deleteSelectedAppointment = deleteSelectedAppointment;
         window.cancelSelectedAppointment = cancelSelectedAppointment;
@@ -1429,49 +1754,44 @@
         window.confirmAppointment = confirmAppointment;
         window.deleteAppointment = deleteAppointment;
 
-        // ============================================
-        // INICIALIZAÇÃO
-        // ============================================
-        
         document.getElementById('currentYear').textContent = new Date().getFullYear();
-        
+
         if (!sessionStorage.getItem('barberflow_user')) {
             window.location.href = 'login.html';
         } else {
             loadInitialData();
         }
-        
-        // Menu hambúrguer
-        document.addEventListener('DOMContentLoaded', function() {
+
+        document.addEventListener('DOMContentLoaded', function () {
             const btn = document.getElementById('menuToggle');
             const overlay = document.getElementById('menuOverlay');
             const menu = document.querySelector('.navbar');
-            
+
             if (btn && menu) {
                 let menuAberto = false;
-                
+
                 function abrirMenu() {
                     menu.style.left = '0px';
                     menuAberto = true;
                     if (overlay) overlay.style.display = 'block';
                     btn.querySelector('i').className = 'fas fa-times';
                 }
-                
+
                 function fecharMenu() {
                     menu.style.left = '-100%';
                     menuAberto = false;
                     if (overlay) overlay.style.display = 'none';
                     btn.querySelector('i').className = 'fas fa-bars';
                 }
-                
+
                 btn.addEventListener('click', () => menuAberto ? fecharMenu() : abrirMenu());
                 if (overlay) overlay.addEventListener('click', fecharMenu);
-                
+
                 menu.style.position = 'fixed';
                 menu.style.left = '-100%';
                 menu.style.transition = 'left 0.3s';
                 if (overlay) overlay.style.display = 'none';
-                
+
                 function checkWidth() {
                     if (window.innerWidth > 768) {
                         btn.style.display = 'none';
@@ -1484,11 +1804,12 @@
                         if (!menuAberto) menu.style.left = '-100%';
                     }
                 }
-                
+
                 checkWidth();
                 window.addEventListener('resize', checkWidth);
             }
         });
     </script>
 </body>
+
 </html>

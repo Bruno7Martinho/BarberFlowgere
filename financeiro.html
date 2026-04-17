@@ -176,7 +176,7 @@
             <div class="logo-container">
                 <div class="logo">
                     <i class="fas fa-cut"></i>
-                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> </span></span></h1>
                 </div>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -192,6 +192,18 @@
             <div class="menu-overlay" id="menuOverlay"></div>
 
             <nav class="navbar">
+                <div class="mobile-user-info" id="mobileUserInfo">
+                    <div class="mobile-user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="mobile-user-details">
+                        <span id="mobileUserName">Carregando...</span>
+                        <span id="mobileBarbershopName" class="mobile-barbershop-name"></span>
+                    </div>
+                    <button onclick="logout()" class="mobile-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
                 <ul>
                     <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
                     <li><a href="agendamentos.html"><i class="fas fa-calendar-alt"></i> Agendamentos</a></li>
@@ -462,6 +474,26 @@
         let pendingDeleteId = null;
         let currentPeriod = 'month';
 
+        function updateMobileUserInfo() {
+            const userName = document.getElementById('userName')?.textContent || 'Usuário';
+            const barbershopName = document.getElementById('barbershopName')?.textContent || '';
+            
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileBarbershopName = document.getElementById('mobileBarbershopName');
+            
+            if (mobileUserName) {
+                mobileUserName.textContent = userName;
+            }
+            
+            if (mobileBarbershopName) {
+                if (barbershopName) {
+                    mobileBarbershopName.innerHTML = '<i class="fas fa-store"></i> ' + barbershopName;
+                } else {
+                    mobileBarbershopName.innerHTML = '';
+                }
+            }
+        }
+
         async function getCurrentBarbearia() {
             try {
                 const userStr = sessionStorage.getItem('barberflow_user');
@@ -500,6 +532,7 @@
                     userNameSpan.textContent = currentUser.email;
                 }
                 
+                updateMobileUserInfo();
                 return currentBarbeariaId;
             } catch (error) {
                 console.error('Erro:', error);
@@ -937,6 +970,7 @@
             if (!document.getElementById('expensesListContainer').classList.contains('hidden')) {
                 renderExpensesTable();
             }
+            updateMobileUserInfo();
         }
 
         function confirmDelete(id) {

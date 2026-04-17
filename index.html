@@ -27,7 +27,6 @@
             min-height: 100vh;
         }
 
-        /* Cabeçalho */
         .header {
             background-color: #000;
             color: white;
@@ -80,7 +79,6 @@
             background-color: #555;
         }
 
-        /* Navegação */
         .navbar {
             background-color: #111;
         }
@@ -118,7 +116,6 @@
             font-size: 1.2rem;
         }
 
-        /* Botão do menu hambúrguer */
         .menu-toggle {
             display: none;
             background: #333;
@@ -137,7 +134,6 @@
             z-index: 1001;
         }
 
-        /* Conteúdo principal */
         .main-content {
             flex: 1;
             padding: 30px;
@@ -146,7 +142,6 @@
             width: 100%;
         }
 
-        /* Widget de data e hora */
         .datetime-widget {
             background: linear-gradient(135deg, #000 0%, #333 100%);
             color: white;
@@ -361,7 +356,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Menu responsivo */
         @media (max-width: 768px) {
             .menu-toggle {
                 display: flex;
@@ -370,6 +364,10 @@
             .logo-container {
                 padding-right: 70px;
                 position: relative;
+            }
+            
+            .user-info {
+                display: none !important;
             }
             
             .navbar {
@@ -381,7 +379,6 @@
                 background: #111;
                 z-index: 1000;
                 transition: left 0.3s ease;
-                padding-top: 80px;
                 box-shadow: 2px 0 10px rgba(0,0,0,0.3);
                 overflow-y: auto;
             }
@@ -401,7 +398,7 @@
             }
             
             .navbar a {
-                padding: 18px 25px;
+                padding: 15px 20px;
                 justify-content: flex-start;
                 border-left: 4px solid transparent;
                 border-bottom: none;
@@ -410,6 +407,76 @@
             .navbar a:hover, .navbar a.active {
                 border-left: 4px solid white;
                 border-bottom: none;
+            }
+            
+            .mobile-user-info {
+                background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+                padding: 25px 20px;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #333;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .mobile-user-avatar {
+                width: 50px;
+                height: 50px;
+                background: #333;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .mobile-user-avatar i {
+                font-size: 2rem;
+                color: #fff;
+            }
+            
+            .mobile-user-details {
+                flex: 1;
+            }
+            
+            .mobile-user-details span {
+                display: block;
+            }
+            
+            #mobileUserName {
+                font-size: 1rem;
+                font-weight: bold;
+                color: #fff;
+                margin-bottom: 5px;
+            }
+            
+            .mobile-barbershop-name {
+                font-size: 0.8rem;
+                color: #aaa;
+            }
+            
+            .mobile-barbershop-name i {
+                margin-right: 5px;
+                color: #3498db;
+            }
+            
+            .mobile-logout-btn {
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 8px 15px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 0.8rem;
+                font-weight: bold;
+                transition: background 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .mobile-logout-btn:hover {
+                background: #c82333;
             }
             
             .menu-overlay {
@@ -453,6 +520,52 @@
                 padding: 15px;
             }
         }
+
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none !important;
+            }
+            
+            .navbar {
+                position: static;
+                width: auto;
+                height: auto;
+                background: #111;
+                box-shadow: none;
+                overflow: visible;
+            }
+            
+            .navbar ul {
+                display: flex;
+                padding: 0 30px;
+            }
+            
+            .navbar li {
+                flex: 1;
+                border-bottom: none;
+            }
+            
+            .navbar a {
+                padding: 15px 20px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                justify-content: center;
+            }
+            
+            .navbar a:hover,
+            .navbar a.active {
+                border-left: none;
+                border-bottom: 3px solid white;
+            }
+            
+            .mobile-user-info {
+                display: none !important;
+            }
+            
+            .menu-overlay {
+                display: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -462,7 +575,8 @@
             <div class="logo-container">
                 <div class="logo">
                     <i class="fas fa-cut"></i>
-                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
+                   
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i></span></span></h1>
                 </div>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -478,6 +592,18 @@
             <div class="menu-overlay" id="menuOverlay"></div>
 
             <nav class="navbar">
+                <div class="mobile-user-info" id="mobileUserInfo">
+                    <div class="mobile-user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="mobile-user-details">
+                        <span id="mobileUserName">Carregando...</span>
+                        <span id="mobileBarbershopName" class="mobile-barbershop-name"></span>
+                    </div>
+                    <button onclick="logout()" class="mobile-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Sair
+                    </button>
+                </div>
                 <ul>
                     <li><a href="index.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
                     <li><a href="agendamentos.html"><i class="fas fa-calendar-alt"></i> Agendamentos</a></li>
@@ -489,19 +615,16 @@
         </header>
 
         <main class="main-content">
-            <!-- Widget de data e hora -->
             <div class="datetime-widget fade-in">
                 <div class="current-time" id="currentTime">00:00:00</div>
                 <div class="current-date" id="currentDate">Carregando...</div>
             </div>
 
-            <!-- Mensagem de boas-vindas -->
             <div class="welcome-section fade-in">
                 <h2 id="welcomeMessage">Bem-vindo ao BarberFlow</h2>
                 <p id="dashboardMessage">Carregando informações do sistema...</p>
             </div>
 
-            <!-- Cards de estatísticas -->
             <div class="stats-grid">
                 <div class="stat-card fade-in">
                     <i class="fas fa-calendar-check"></i>
@@ -532,7 +655,6 @@
                 </div>
             </div>
 
-            <!-- Ações rápidas -->
             <div class="quick-actions fade-in">
                 <a href="agendamentos.html" class="action-btn">
                     <i class="fas fa-plus-circle"></i>
@@ -555,7 +677,6 @@
                 </a>
             </div>
 
-            <!-- Próximos agendamentos -->
             <div class="recent-appointments fade-in">
                 <h3><i class="fas fa-clock"></i> Próximos Agendamentos</h3>
                 <div id="upcomingAppointments">
@@ -566,7 +687,6 @@
                 </div>
             </div>
 
-            <!-- Desempenho dos Barbeiros -->
             <div class="recent-appointments fade-in">
                 <h3><i class="fas fa-user-tie"></i> Desempenho dos Barbeiros (Este Mês)</h3>
                 <div id="barberPerformance">
@@ -579,31 +699,35 @@
         </main>
 
         <footer class="footer">
-            <p>BarberFlow © <span id="currentYear">2026</span> - Sistema de Gestão Profissional</p>
+            <p>BarberFlow © <span id="currentYear"></span> - Sistema de Gestão Profissional</p>
         </footer>
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURAÇÃO SUPABASE (USANDO VARIÁVEL GLOBAL)
-        // ============================================
         const SUPABASE_URL = 'https://opmpodjqdxtpdolvrzln.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_RYuRxp9GWjfyEMwE3bjMCg_lYIJOg5a';
-        
-        // Usar a variável global 'supabase' já criada
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ============================================
-        // VARIÁVEIS GLOBAIS
-        // ============================================
         let currentBarbeariaId = null;
         let currentUser = null;
         let refreshInterval = null;
 
-        // ============================================
-        // FUNÇÕES DE INICIALIZAÇÃO
-        // ============================================
-        
+        function updateMobileUserInfo() {
+            const userName = document.getElementById('userName')?.textContent || 'Usuário';
+            const barbershopName = document.getElementById('barbershopName')?.textContent || '';
+            
+            const mobileUserName = document.getElementById('mobileUserName');
+            const mobileBarbershopName = document.getElementById('mobileBarbershopName');
+            
+            if (mobileUserName) {
+                mobileUserName.textContent = userName;
+            }
+            
+            if (mobileBarbershopName && barbershopName) {
+                mobileBarbershopName.innerHTML = '<i class="fas fa-store"></i> ' + barbershopName;
+            }
+        }
+
         async function getCurrentBarbearia() {
             try {
                 const userStr = sessionStorage.getItem('barberflow_user');
@@ -642,6 +766,7 @@
                     userNameSpan.textContent = currentUser.email;
                 }
                 
+                updateMobileUserInfo();
                 return currentBarbeariaId;
             } catch (error) {
                 console.error('Erro ao buscar barbearia:', error);
@@ -649,7 +774,6 @@
             }
         }
 
-        // Atualizar data e hora em tempo real
         function updateDateTime() {
             const now = new Date();
             
@@ -675,11 +799,10 @@
             else if (hour >= 12 && hour < 18) greeting = 'Boa tarde';
             
             if (currentUser) {
-                document.getElementById('welcomeMessage').textContent = `${greeting}, ${currentUser.nome || currentUser.email || 'Usuário'}!`;
+                document.getElementById('welcomeMessage').textContent = greeting + ', ' + (currentUser.nome || currentUser.email || 'Usuário') + '!';
             }
         }
 
-        // Carregar dados do dashboard
         async function loadDashboardData() {
             if (!currentBarbeariaId) return;
             
@@ -692,7 +815,6 @@
                 firstDayOfMonth.setHours(0, 0, 0, 0);
                 const firstDayStr = firstDayOfMonth.toISOString().split('T')[0];
                 
-                // 1. Buscar agendamentos
                 const { data: appointments, error: aptError } = await supabaseClient
                     .from('agendamentos')
                     .select(`
@@ -705,7 +827,6 @@
                 
                 if (aptError) throw aptError;
                 
-                // Contar agendamentos de hoje
                 const todayAppointments = appointments?.filter(a => 
                     a.data_hora?.split('T')[0] === today && 
                     a.status !== 'cancelado'
@@ -713,9 +834,8 @@
                 
                 const todayCount = todayAppointments.length;
                 document.getElementById('todayAppointments').textContent = todayCount;
-                document.getElementById('todayAppointmentsChange').textContent = `${todayCount} agendamentos hoje`;
+                document.getElementById('todayAppointmentsChange').textContent = todayCount + ' agendamentos hoje';
                 
-                // Calcular receita do mês
                 const monthAppointments = appointments?.filter(a => 
                     a.data_hora?.split('T')[0] >= firstDayStr &&
                     a.status === 'concluido'
@@ -723,9 +843,8 @@
                 
                 const monthRevenue = monthAppointments.reduce((sum, a) => sum + (a.servicos?.preco || 0), 0);
                 document.getElementById('monthRevenue').textContent = formatMoney(monthRevenue);
-                document.getElementById('monthRevenueChange').textContent = `${monthAppointments.length} serviços concluídos`;
+                document.getElementById('monthRevenueChange').textContent = monthAppointments.length + ' serviços concluídos';
                 
-                // 2. Contar clientes
                 const { count: totalClients, error: clientError } = await supabaseClient
                     .from('clientes')
                     .select('*', { count: 'exact', head: true })
@@ -733,13 +852,12 @@
                 
                 if (!clientError) {
                     document.getElementById('totalClients').textContent = totalClients || 0;
-                    document.getElementById('newClients').textContent = `${totalClients || 0} clientes cadastrados`;
+                    document.getElementById('newClients').textContent = (totalClients || 0) + ' clientes cadastrados';
                 }
                 
-                // 3. Calcular taxa de ocupação
                 const totalSlots = 48;
                 const occupancyRate = Math.min(100, Math.round((todayCount / totalSlots) * 100));
-                document.getElementById('occupancyRate').textContent = `${occupancyRate}%`;
+                document.getElementById('occupancyRate').textContent = occupancyRate + '%';
                 
                 if (occupancyRate > 80) {
                     document.getElementById('occupancyTrend').textContent = '🔴 Alta demanda - Agenda cheia';
@@ -755,15 +873,13 @@
                     document.getElementById('occupancyTrend').className = 'stat-change';
                 }
                 
-                // 4. Carregar próximos agendamentos
                 await loadUpcomingAppointments(appointments || [], today);
-                
-                // 5. Carregar desempenho dos barbeiros
                 await loadBarberPerformance(appointments || [], firstDayStr);
                 
-                document.getElementById('dashboardMessage').innerHTML = `✅ Sistema atualizado • ${todayCount} agendamentos hoje • ${formatMoney(monthRevenue)} em receitas`;
+                document.getElementById('dashboardMessage').innerHTML = '✅ Sistema atualizado • ' + todayCount + ' agendamentos hoje • ' + formatMoney(monthRevenue) + ' em receitas';
                 document.getElementById('dashboardMessage').style.color = '#28a745';
                 
+                updateMobileUserInfo();
             } catch (error) {
                 console.error('Erro ao carregar dashboard:', error);
                 document.getElementById('dashboardMessage').innerHTML = '⚠️ Erro ao carregar dados. Tente novamente.';
@@ -780,17 +896,12 @@
                 .slice(0, 6) || [];
             
             if (upcoming.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-plus"></i>
-                        <p>Nenhum agendamento futuro encontrado</p>
-                        <small>Clique em "Novo Agendamento" para começar</small>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-plus"></i><p>Nenhum agendamento futuro encontrado</p><small>Clique em "Novo Agendamento" para começar</small></div>';
                 return;
             }
             
-            container.innerHTML = upcoming.map(apt => {
+            let html = '';
+            for (const apt of upcoming) {
                 const isToday = apt.data_hora?.split('T')[0] === today;
                 const formattedDate = isToday ? 'HOJE' : formatDate(apt.data_hora);
                 
@@ -803,24 +914,20 @@
                                   apt.status === 'concluido' ? 'Concluído' :
                                   apt.status === 'cancelado' ? 'Cancelado' : 'Agendado';
                 
-                return `
-                    <div class="appointment-item">
-                        <div class="appointment-info">
-                            <h4>${apt.clientes?.nome || 'Cliente'}</h4>
-                            <div class="appointment-meta">
-                                <span><i class="fas fa-scissors"></i> ${apt.servicos?.nome || 'Serviço'}</span>
-                                <span><i class="fas fa-user-tie"></i> ${apt.barbeiros?.nome || 'Barbeiro'}</span>
-                                <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
-                                <span><i class="fas fa-clock"></i> ${formatTime(apt.data_hora)}</span>
-                            </div>
-                        </div>
-                        <div class="appointment-status ${statusClass}">
-                            <i class="fas fa-${apt.status === 'confirmado' ? 'check-circle' : 'calendar'}"></i>
-                            ${statusText}
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                html += '<div class="appointment-item">';
+                html += '<div class="appointment-info">';
+                html += '<h4>' + (apt.clientes?.nome || 'Cliente') + '</h4>';
+                html += '<div class="appointment-meta">';
+                html += '<span><i class="fas fa-scissors"></i> ' + (apt.servicos?.nome || 'Serviço') + '</span>';
+                html += '<span><i class="fas fa-user-tie"></i> ' + (apt.barbeiros?.nome || 'Barbeiro') + '</span>';
+                html += '<span><i class="fas fa-calendar"></i> ' + formattedDate + '</span>';
+                html += '<span><i class="fas fa-clock"></i> ' + formatTime(apt.data_hora) + '</span>';
+                html += '</div></div>';
+                html += '<div class="appointment-status ' + statusClass + '">';
+                html += '<i class="fas fa-' + (apt.status === 'confirmado' ? 'check-circle' : 'calendar') + '"></i> ' + statusText;
+                html += '</div></div>';
+            }
+            container.innerHTML = html;
         }
 
         async function loadBarberPerformance(appointments, firstDayStr) {
@@ -833,13 +940,7 @@
                 .eq('status', 'ativo');
             
             if (barberError || !barbers || barbers.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-user-tie"></i>
-                        <p>Nenhum barbeiro cadastrado</p>
-                        <small>Cadastre barbeiros no sistema</small>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-user-tie"></i><p>Nenhum barbeiro cadastrado</p><small>Cadastre barbeiros no sistema</small></div>';
                 return;
             }
             
@@ -892,7 +993,7 @@
                 
                 const barberCard = document.createElement('div');
                 barberCard.className = 'barber-card';
-                barberCard.style.borderLeft = `5px solid ${performanceColor}`;
+                barberCard.style.borderLeft = '5px solid ' + performanceColor;
                 barberCard.innerHTML = `
                     <div style="text-align: center;">
                         <i class="fas fa-user-tie" style="font-size: 2.5rem; color: #000;"></i>
@@ -936,10 +1037,6 @@
             }
         }
 
-        // ============================================
-        // FUNÇÕES AUXILIARES
-        // ============================================
-        
         function formatMoney(value) {
             return new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
@@ -959,10 +1056,6 @@
             return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
-        // ============================================
-        // FUNÇÕES GLOBAIS
-        // ============================================
-        
         window.logout = function() {
             if (confirm('Deseja realmente sair do sistema?')) {
                 if (refreshInterval) clearInterval(refreshInterval);
@@ -971,10 +1064,6 @@
             }
         };
 
-        // ============================================
-        // INICIALIZAÇÃO
-        // ============================================
-        
         document.getElementById('currentYear').textContent = new Date().getFullYear();
         
         if (!sessionStorage.getItem('barberflow_user')) {
@@ -993,37 +1082,36 @@
             })();
         }
         
-        // Menu hambúrguer
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('menuToggle');
             const overlay = document.getElementById('menuOverlay');
             const menu = document.querySelector('.navbar');
-            
+
             if (btn && menu) {
                 let menuAberto = false;
-                
+
                 function abrirMenu() {
                     menu.style.left = '0px';
                     menuAberto = true;
                     if (overlay) overlay.style.display = 'block';
                     btn.querySelector('i').className = 'fas fa-times';
                 }
-                
+
                 function fecharMenu() {
-                    menu.style.left = '-280px';
+                    menu.style.left = '-100%';
                     menuAberto = false;
                     if (overlay) overlay.style.display = 'none';
                     btn.querySelector('i').className = 'fas fa-bars';
                 }
-                
+
                 btn.addEventListener('click', () => menuAberto ? fecharMenu() : abrirMenu());
                 if (overlay) overlay.addEventListener('click', fecharMenu);
-                
+
                 menu.style.position = 'fixed';
-                menu.style.left = '-280px';
+                menu.style.left = '-100%';
                 menu.style.transition = 'left 0.3s';
                 if (overlay) overlay.style.display = 'none';
-                
+
                 function checkWidth() {
                     if (window.innerWidth > 768) {
                         btn.style.display = 'none';
@@ -1033,10 +1121,10 @@
                     } else {
                         btn.style.display = 'flex';
                         menu.style.position = 'fixed';
-                        if (!menuAberto) menu.style.left = '-280px';
+                        if (!menuAberto) menu.style.left = '-100%';
                     }
                 }
-                
+
                 checkWidth();
                 window.addEventListener('resize', checkWidth);
             }
