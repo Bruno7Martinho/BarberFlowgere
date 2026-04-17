@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Estilos adicionais */
         .modal {
             position: fixed;
             top: 0;
@@ -304,10 +303,6 @@
             margin: 5px 0;
         }
 
-        /* ============================================
-           MENU HAMBÚRGUER RESPONSIVO
-           ============================================ */
-
         .menu-toggle {
             display: none;
             background: #333;
@@ -477,14 +472,6 @@
             .user-info {
                 display: none !important;
             }
-            
-            .logo h1 {
-                font-size: 1.4rem;
-            }
-            
-            .logo i {
-                font-size: 1.8rem;
-            }
         }
 
         @media (min-width: 769px) {
@@ -542,7 +529,7 @@
             <div class="logo-container">
                 <div class="logo">
                     <i class="fas fa-cut"></i>
-                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> </span></span></h1>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> <span id="barbershopName"></span></span></h1>
                 </div>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -680,68 +667,42 @@
                             </tr>
                         </thead>
                         <tbody id="clientsTableBody">
-                            <tr>
-                                <td colspan="8" style="text-align: center;">Carregando clientes...<\/td>
-                            <\/tr>
-                        </tbody>
+                            <tr><td colspan="8" style="text-align: center;">Carregando clientes...<\/td><\/tr>
+                        <\/tbody>
                     <\/table>
-                </div>
-            </div>
-        </main>
+                <\/div>
+            <\/div>
+        <\/main>
 
         <footer class="footer">
-            <p>BarberFlow &copy; <span id="currentYear"></span> - Sistema de Gerenciamento</p>
-        </footer>
-    </div>
+            <p>BarberFlow &copy; <span id="currentYear"><\/span> - Sistema de Gerenciamento<\/p>
+        <\/footer>
+    <\/div>
 
     <div id="clientModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-user"></i> Detalhes do Cliente</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
+                <h3><i class="fas fa-user"><\/i> Detalhes do Cliente<\/h3>
+                <button class="modal-close" onclick="closeModal()">&times;<\/button>
+            <\/div>
             <div class="modal-body" id="modalBody">
-                <div class="detail-row">
-                    <strong>Nome:</strong> <span id="modalClientName">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Telefone:</strong> <span id="modalClientPhone">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>E-mail:</strong> <span id="modalClientEmail">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>CPF:</strong> <span id="modalClientCpf">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Data Nascimento:</strong> <span id="modalClientBirthdate">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Total Gasto:</strong> <span id="modalClientTotalGasto">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Última Visita:</strong> <span id="modalClientLastVisit">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Status:</strong> <span id="modalClientStatus">Carregando...</span>
-                </div>
-                <div class="detail-row">
-                    <strong>Observações:</strong> <span id="modalClientNotes">Nenhuma</span>
-                </div>
-            </div>
+                <div class="detail-row"><strong>Nome:<\/strong> <span id="modalClientName">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>Telefone:<\/strong> <span id="modalClientPhone">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>E-mail:<\/strong> <span id="modalClientEmail">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>CPF:<\/strong> <span id="modalClientCpf">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>Data Nascimento:<\/strong> <span id="modalClientBirthdate">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>Total Gasto:<\/strong> <span id="modalClientTotalGasto">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>Última Visita:<\/strong> <span id="modalClientLastVisit">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>Status:<\/strong> <span id="modalClientStatus">Carregando...<\/span><\/div>
+                <div class="detail-row"><strong>Observações:<\/strong> <span id="modalClientNotes">Nenhuma<\/span><\/div>
+            <\/div>
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="editCurrentClient()">
-                    <i class="fas fa-edit"></i> Editar
-                </button>
-                <button class="btn btn-danger" onclick="deleteCurrentClient()">
-                    <i class="fas fa-trash"></i> Excluir
-                </button>
-                <button class="btn btn-secondary" onclick="closeModal()">
-                    <i class="fas fa-times"></i> Fechar
-                </button>
-            </div>
-        </div>
-    </div>
+                <button class="btn btn-primary" onclick="editCurrentClient()"><i class="fas fa-edit"><\/i> Editar<\/button>
+                <button class="btn btn-danger" onclick="deleteCurrentClient()"><i class="fas fa-trash"><\/i> Excluir<\/button>
+                <button class="btn btn-secondary" onclick="closeModal()"><i class="fas fa-times"><\/i> Fechar<\/button>
+            <\/div>
+        <\/div>
+    <\/div>
 
     <script>
         const SUPABASE_URL = 'https://opmpodjqdxtpdolvrzln.supabase.co';
@@ -765,12 +726,8 @@
                 mobileUserName.textContent = userName;
             }
             
-            if (mobileBarbershopName) {
-                if (barbershopName) {
-                    mobileBarbershopName.innerHTML = `<i class="fas fa-store"></i> ${barbershopName}`;
-                } else {
-                    mobileBarbershopName.innerHTML = '';
-                }
+            if (mobileBarbershopName && barbershopName) {
+                mobileBarbershopName.innerHTML = '<i class="fas fa-store"></i> ' + barbershopName;
             }
         }
 
@@ -816,7 +773,7 @@
                 return currentBarbeariaId;
             } catch (error) {
                 console.error('Erro ao buscar barbearia:', error);
-                showAlert('Erro ao carregar dados da barbearia', 'error');
+                showAlert('error', 'Erro ao carregar dados da barbearia');
                 return null;
             }
         }
@@ -838,7 +795,7 @@
                 return clients;
             } catch (error) {
                 console.error('Erro ao carregar clientes:', error);
-                showAlert('Erro ao carregar clientes', 'error');
+                showAlert('error', 'Erro ao carregar clientes');
                 return [];
             }
         }
@@ -855,8 +812,7 @@
                             updated_at: new Date().toISOString()
                         })
                         .eq('id', editingClientId)
-                        .eq('barbearia_id', currentBarbeariaId)
-                        .select();
+                        .eq('barbearia_id', currentBarbeariaId);
                 } else {
                     result = await supabaseClient
                         .from('clientes')
@@ -865,20 +821,19 @@
                             barbearia_id: currentBarbeariaId,
                             total_gasto: 0,
                             created_at: new Date().toISOString()
-                        }])
-                        .select();
+                        }]);
                 }
                 
                 if (result.error) throw result.error;
                 
-                showAlert(editingClientId ? 'Cliente atualizado!' : 'Cliente criado!', 'success');
+                showAlert('success', editingClientId ? 'Cliente atualizado!' : 'Cliente criado!');
                 await loadClients();
                 hideForm();
                 editingClientId = null;
                 return true;
             } catch (error) {
                 console.error('Erro ao salvar cliente:', error);
-                showAlert('Erro ao salvar cliente: ' + error.message, 'error');
+                showAlert('error', 'Erro ao salvar cliente: ' + error.message);
                 return false;
             }
         }
@@ -895,7 +850,7 @@
                 if (countError) throw countError;
                 
                 if (count > 0) {
-                    showAlert('Não é possível excluir cliente com agendamentos. Marque como inativo.', 'error');
+                    showAlert('error', 'Não é possível excluir cliente com agendamentos. Marque como inativo.');
                     return;
                 }
                 
@@ -907,11 +862,11 @@
                 
                 if (error) throw error;
                 
-                showAlert('Cliente excluído!', 'success');
+                showAlert('success', 'Cliente excluído!');
                 await loadClients();
             } catch (error) {
                 console.error('Erro ao excluir cliente:', error);
-                showAlert('Erro ao excluir cliente', 'error');
+                showAlert('error', 'Erro ao excluir cliente');
             }
         }
 
@@ -950,34 +905,26 @@
             }
             
             if (filteredClients.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhum cliente encontrado<\/td><\/tr>';
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhum cliente encontrado</td></tr>';
                 return;
             }
             
             let html = '';
             for (const client of filteredClients) {
-                html += `
-                    <tr>
-                        <td><strong>${escapeHtml(client.nome)}</strong></td>
-                        <td>${client.telefone || '-'}</td>
-                        <td>${client.email || '-'}</td>
-                        <td>${client.data_nascimento ? formatDate(client.data_nascimento) : '-'}</td>
-                        <td>${formatMoney(client.total_gasto || 0)}</td>
-                        <td>${client.ultima_visita ? formatDateTime(client.ultima_visita) : '-'}</td>
-                        <td><span class="status-badge status-${client.status || 'ativo'}">${client.status === 'inativo' ? 'Inativo' : 'Ativo'}</span></td>
-                        <td class="action-buttons">
-                            <button class="btn btn-primary" onclick="viewClient('${client.id}')" style="padding: 5px 10px;">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-warning" onclick="editClient('${client.id}')" style="padding: 5px 10px;">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="deleteClient('${client.id}')" style="padding: 5px 10px;">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        <\/td>
-                    <\/tr>
-                `;
+                html += '<tr>';
+                html += '<td><strong>' + escapeHtml(client.nome) + '</strong></td>';
+                html += '<td>' + (client.telefone || '-') + '</td>';
+                html += '<td>' + (client.email || '-') + '</td>';
+                html += '<td>' + (client.data_nascimento ? formatDate(client.data_nascimento) : '-') + '</td>';
+                html += '<td>' + formatMoney(client.total_gasto || 0) + '</td>';
+                html += '<td>' + (client.ultima_visita ? formatDateTime(client.ultima_visita) : '-') + '</td>';
+                html += '<td><span class="status-badge status-' + (client.status || 'ativo') + '">' + (client.status === 'inativo' ? 'Inativo' : 'Ativo') + '</span></td>';
+                html += '<td class="action-buttons">';
+                html += '<button class="btn btn-primary" onclick="viewClient(\'' + client.id + '\')" style="padding: 5px 10px;"><i class="fas fa-eye"></i></button>';
+                html += '<button class="btn btn-warning" onclick="editClient(\'' + client.id + '\')" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>';
+                html += '<button class="btn btn-danger" onclick="deleteClient(\'' + client.id + '\')" style="padding: 5px 10px;"><i class="fas fa-trash"></i></button>';
+                html += '</td>';
+                html += '</tr>';
             }
             tbody.innerHTML = html;
         }
@@ -995,7 +942,7 @@
             document.getElementById('modalClientBirthdate').textContent = client.data_nascimento ? formatDate(client.data_nascimento) : '-';
             document.getElementById('modalClientTotalGasto').textContent = formatMoney(client.total_gasto || 0);
             document.getElementById('modalClientLastVisit').textContent = client.ultima_visita ? formatDateTime(client.ultima_visita) : '-';
-            document.getElementById('modalClientStatus').innerHTML = `<span class="status-badge status-${client.status || 'ativo'}">${client.status === 'inativo' ? 'Inativo' : 'Ativo'}</span>`;
+            document.getElementById('modalClientStatus').innerHTML = '<span class="status-badge status-' + (client.status || 'ativo') + '">' + (client.status === 'inativo' ? 'Inativo' : 'Ativo') + '</span>';
             document.getElementById('modalClientNotes').textContent = client.observacoes || 'Nenhuma';
             
             const modalBody = document.getElementById('modalBody');
@@ -1008,12 +955,10 @@
                 historyDiv.className = 'history-section';
                 let historyHtml = '<div class="detail-row"><strong>Últimos Agendamentos:</strong><div style="margin-top: 10px;">';
                 for (const apt of history) {
-                    historyHtml += `
-                        <div style="background: #f8f9fa; padding: 8px; margin-bottom: 5px; border-radius: 4px;">
-                            ${formatDateTime(apt.data_hora)} - ${apt.servicos?.nome || 'Serviço'} - ${formatMoney(apt.valor_total)}
-                            <br><small>Barbeiro: ${apt.barbeiros?.nome || '-'}</small>
-                        </div>
-                    `;
+                    historyHtml += '<div style="background: #f8f9fa; padding: 8px; margin-bottom: 5px; border-radius: 4px;">';
+                    historyHtml += formatDateTime(apt.data_hora) + ' - ' + (apt.servicos?.nome || 'Serviço') + ' - ' + formatMoney(apt.valor_total);
+                    historyHtml += '<br><small>Barbeiro: ' + (apt.barbeiros?.nome || '-') + '</small>';
+                    historyHtml += '</div>';
                 }
                 historyHtml += '</div></div>';
                 historyDiv.innerHTML = historyHtml;
@@ -1086,10 +1031,19 @@
             editingClientId = null;
         }
 
-        function showAlert(message, type) {
-            const alertDiv = document.getElementById('alertMessage');
+        function showAlert(type, message) {
+            let alertDiv = document.getElementById('alertMessage');
+            if (!alertDiv) {
+                alertDiv = document.createElement('div');
+                alertDiv.id = 'alertMessage';
+                alertDiv.className = 'alert hidden';
+                const mainContent = document.querySelector('.main-content .section');
+                if (mainContent) {
+                    mainContent.insertBefore(alertDiv, mainContent.firstChild);
+                }
+            }
             alertDiv.textContent = message;
-            alertDiv.className = `alert ${type}`;
+            alertDiv.className = 'alert ' + type;
             alertDiv.classList.remove('hidden');
             
             setTimeout(() => {
@@ -1137,7 +1091,7 @@
             };
             
             if (!formData.nome || !formData.telefone) {
-                showAlert('Preencha nome e telefone', 'error');
+                showAlert('error', 'Preencha nome e telefone');
                 return;
             }
             
@@ -1237,5 +1191,4 @@
         });
     </script>
 </body>
-
 </html>
