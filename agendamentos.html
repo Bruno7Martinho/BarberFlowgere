@@ -100,6 +100,7 @@
             justify-content: flex-end;
             gap: 10px;
             border-top: 1px solid #dee2e6;
+            flex-wrap: wrap;
         }
 
         .detail-row {
@@ -789,6 +790,14 @@
                 width: 95%;
                 margin: 10px;
             }
+            
+            .modal-footer {
+                flex-direction: column;
+            }
+            
+            .modal-footer .btn {
+                width: 100%;
+            }
         }
 
         @media (min-width: 769px) {
@@ -846,7 +855,7 @@
             <div class="logo-container">
                 <div class="logo">
                     <i class="fas fa-cut"></i>
-                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i> </span></span></h1>
+                    <h1>BarberFlow <span id="barbershopBadge" class="barbershop-badge" style="display: none;"><i class="fas fa-store"></i></span></span></h1>
                 </div>
 
                 <button class="menu-toggle" id="menuToggle">
@@ -1038,6 +1047,7 @@
         </footer>
     </div>
 
+    <!-- MODAL DE DETALHES - Com botão Concluir -->
     <div id="appointmentModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -1054,14 +1064,17 @@
                 <div class="detail-row"><strong>Observações:</strong> <span id="modalNotes">Nenhuma</span></div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-success" id="modalCompleteBtn" onclick="completeSelectedAppointment()">
+                    <i class="fas fa-check-circle"></i> Concluir
+                </button>
                 <button class="btn btn-primary" id="modalEditBtn" onclick="editSelectedAppointment()">
                     <i class="fas fa-edit"></i> Editar
                 </button>
-                <button class="btn btn-danger" id="modalDeleteBtn" onclick="deleteSelectedAppointment()">
-                    <i class="fas fa-trash"></i> Excluir
-                </button>
                 <button class="btn btn-warning" id="modalCancelBtn" onclick="cancelSelectedAppointment()">
                     <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="modalDeleteBtn" onclick="deleteSelectedAppointment()">
+                    <i class="fas fa-trash"></i> Excluir
                 </button>
                 <button class="btn btn-secondary" onclick="closeModal()">
                     <i class="fas fa-times"></i> Fechar
@@ -1093,12 +1106,11 @@
         function getLocalDate(dateString) {
             if (!dateString) return null;
             const date = new Date(dateString);
-            // Ajusta para o fuso horário local
             const userTimezoneOffset = date.getTimezoneOffset() * 60000;
             return new Date(date.getTime() + userTimezoneOffset);
         }
 
-        // Função para comparar se duas datas são o mesmo dia (considerando apenas ano/mês/dia)
+        // Função para comparar se duas datas são o mesmo dia
         function isSameDay(date1, date2) {
             if (!date1 || !date2) return false;
             const d1 = new Date(date1);
@@ -1108,7 +1120,7 @@
                    d1.getDate() === d2.getDate();
         }
 
-        // Função para formatar data para YYYY-MM-DD sem timezone
+        // Função para formatar data para YYYY-MM-DD
         function formatDateToYYYYMMDD(date) {
             const d = new Date(date);
             const year = d.getFullYear();
@@ -1731,7 +1743,6 @@
                     const slot = document.createElement('div');
                     slot.className = 'calendar-slot';
                     
-                    // Usar a data local para criar o agendamento
                     const slotDateStr = formatDateToYYYYMMDD(date);
                     slot.onclick = () => {
                         document.getElementById('modalAppointmentDate').value = slotDateStr;
@@ -1739,7 +1750,6 @@
                         showAppointmentModal();
                     };
 
-                    // Filtrar agendamentos para este horário específico
                     const appointmentsAtSlot = filteredAppointments.filter(a => {
                         if (!a.data_hora) return false;
                         const aptDate = new Date(a.data_hora);
@@ -1778,7 +1788,6 @@
                 return;
             }
 
-            // Agrupar por data
             const appointmentsByDate = {};
             filteredAppointments.forEach(apt => {
                 if (!apt.data_hora) return;
@@ -1789,7 +1798,6 @@
                 appointmentsByDate[date].push(apt);
             });
 
-            // Ordenar datas (mais recentes primeiro)
             const sortedDates = Object.keys(appointmentsByDate).sort().reverse();
 
             let html = '';
@@ -1810,7 +1818,6 @@
                         </div>
                 `;
 
-                // Agrupar por horário (pode ter múltiplos no mesmo horário se forem barbeiros diferentes)
                 const byTime = {};
                 apts.forEach(apt => {
                     const time = formatTime(apt.data_hora);
@@ -1948,6 +1955,13 @@
             if (selectedAppointmentId) cancelAppointment(selectedAppointmentId);
         }
 
+        // NOVA FUNÇÃO: Concluir agendamento direto do modal de detalhes
+        function completeSelectedAppointment() {
+            if (selectedAppointmentId) {
+                completeAppointment(selectedAppointmentId);
+            }
+        }
+
         function closeModal() {
             document.getElementById('appointmentModal').classList.add('hidden');
             selectedAppointmentId = null;
@@ -2023,6 +2037,7 @@
         window.editSelectedAppointment = editSelectedAppointment;
         window.deleteSelectedAppointment = deleteSelectedAppointment;
         window.cancelSelectedAppointment = cancelSelectedAppointment;
+        window.completeSelectedAppointment = completeSelectedAppointment;
         window.viewAppointmentDetails = viewAppointmentDetails;
         window.toggleView = toggleView;
         window.selectClient = selectClient;
