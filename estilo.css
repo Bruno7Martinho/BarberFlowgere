@@ -956,31 +956,3 @@ tr:hover {
     opacity: 0;
 }
 
-.logo-img {
-    height: 40px;
-    width: auto;
-    max-width: 180px;
-    display: block;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-/* Responsivo para mobile */
-@media (max-width: 768px) {
-    .logo-img {
-        height: 30px;
-        max-width: 150px;
-    }
-}
-
-/* Para telas muito pequenas */
-@media (max-width: 480px) {
-    .logo-img {
-        height: 25px;
-        max-width: 120px;
-    }
-}
