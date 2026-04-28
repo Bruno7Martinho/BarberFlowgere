@@ -1780,107 +1780,124 @@
         }
 
         function renderAppointmentsList() {
-            const container = document.getElementById('appointmentsList');
-            if (!container) return;
+    const container = document.getElementById('appointmentsList');
+    if (!container) return;
 
-            if (filteredAppointments.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 40px; background: white; border-radius: 8px;">Nenhum agendamento encontrado para o período selecionado</div>';
-                return;
-            }
+    if (filteredAppointments.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 40px; background: white; border-radius: 8px;">Nenhum agendamento encontrado para o período selecionado</div>';
+        return;
+    }
 
-            const appointmentsByDate = {};
-            filteredAppointments.forEach(apt => {
-                if (!apt.data_hora) return;
-                const date = apt.data_hora.split('T')[0];
-                if (!appointmentsByDate[date]) {
-                    appointmentsByDate[date] = [];
-                }
-                appointmentsByDate[date].push(apt);
-            });
+    // Função para extrair a data corretamente da string ISO
+    const getDateKey = (datetime) => {
+        if (!datetime) return null;
+        // Pega apenas a parte da data YYYY-MM-DD
+        return datetime.split('T')[0];
+    };
 
-            const sortedDates = Object.keys(appointmentsByDate).sort().reverse();
-
-            let html = '';
-            for (const dateKey of sortedDates) {
-                const date = new Date(dateKey);
-                const dayName = date.toLocaleDateString('pt-BR', { weekday: 'long' });
-                const formattedDate = date.toLocaleDateString('pt-BR');
-                const apts = appointmentsByDate[dateKey].sort((a, b) => new Date(a.data_hora) - new Date(b.data_hora));
-
-                html += `
-                    <div class="date-group">
-                        <div class="date-header">
-                            <h3>
-                                <i class="fas fa-calendar-day"></i>
-                                ${dayName.charAt(0).toUpperCase() + dayName.slice(1)} - ${formattedDate}
-                                <span class="appointment-count">${apts.length} agendamento${apts.length !== 1 ? 's' : ''}</span>
-                            </h3>
-                        </div>
-                `;
-
-                const byTime = {};
-                apts.forEach(apt => {
-                    const time = formatTime(apt.data_hora);
-                    if (!byTime[time]) byTime[time] = [];
-                    byTime[time].push(apt);
-                });
-
-                const sortedTimes = Object.keys(byTime).sort();
-                
-                for (const time of sortedTimes) {
-                    const timeApts = byTime[time];
-                    html += `
-                        <div class="time-slot">
-                            <div class="time-slot-header">
-                                <i class="fas fa-clock"></i>
-                                <strong>${time}</strong>
-                            </div>
-                            <div class="time-slot-body">
-                    `;
-                    
-                    for (const apt of timeApts) {
-                        html += `
-                            <div class="appointment-item" onclick="viewAppointmentDetails('${apt.id}')">
-                                <div>
-                                    <div>
-                                        <strong>${apt.clientes?.nome || 'Cliente'}</strong> - 
-                                        ${apt.servicos?.nome || 'Serviço'}
-                                    </div>
-                                    <div style="font-size: 14px; color: #666; margin-top: 8px;">
-                                        <i class="fas fa-user"></i> ${apt.barbeiros?.nome || 'Barbeiro'} | 
-                                        <i class="fas fa-money-bill"></i> ${formatMoney(apt.valor_total)}
-                                    </div>
-                                    ${apt.observacoes ? `<div style="font-size: 12px; color: #888; margin-top: 5px;"><i class="fas fa-comment"></i> ${escapeHtml(apt.observacoes.substring(0, 50))}${apt.observacoes.length > 50 ? '...' : ''}</div>` : ''}
-                                </div>
-                                <div class="appointment-actions" onclick="event.stopPropagation()">
-                                    <span class="status-badge status-${apt.status}">${getStatusText(apt.status)}</span>
-                                    <button class="btn btn-primary btn-sm" onclick="editAppointmentFromModal('${apt.id}')" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-success btn-sm" onclick="completeAppointment('${apt.id}')" title="Concluir">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-warning btn-sm" onclick="cancelAppointment('${apt.id}')" title="Cancelar">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteAppointment('${apt.id}')" title="Excluir">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    html += `
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                html += `</div>`;
-            }
-            container.innerHTML = html;
+    // Agrupar por data usando a string YYYY-MM-DD diretamente
+    const appointmentsByDate = {};
+    filteredAppointments.forEach(apt => {
+        if (!apt.data_hora) return;
+        const dateKey = getDateKey(apt.data_hora);
+        if (!appointmentsByDate[dateKey]) {
+            appointmentsByDate[dateKey] = [];
         }
+        appointmentsByDate[dateKey].push(apt);
+    });
+
+    // Ordenar datas (mais recentes primeiro) - comparação de string YYYY-MM-DD funciona
+    const sortedDates = Object.keys(appointmentsByDate).sort().reverse();
+
+    let html = '';
+    for (const dateKey of sortedDates) {
+        // Criar data de forma segura para exibição (sem problema de timezone)
+        const [year, month, day] = dateKey.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
+        const dayName = date.toLocaleDateString('pt-BR', { weekday: 'long' });
+        const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+        
+        const apts = appointmentsByDate[dateKey].sort((a, b) => {
+            const timeA = a.data_hora.split('T')[1] || '';
+            const timeB = b.data_hora.split('T')[1] || '';
+            return timeA.localeCompare(timeB);
+        });
+
+        html += `
+            <div class="date-group">
+                <div class="date-header">
+                    <h3>
+                        <i class="fas fa-calendar-day"></i>
+                        ${dayName.charAt(0).toUpperCase() + dayName.slice(1)} - ${formattedDate}
+                        <span class="appointment-count">${apts.length} agendamento${apts.length !== 1 ? 's' : ''}</span>
+                    </h3>
+                </div>
+        `;
+
+        // Agrupar por horário
+        const byTime = {};
+        apts.forEach(apt => {
+            const time = formatTime(apt.data_hora);
+            if (!byTime[time]) byTime[time] = [];
+            byTime[time].push(apt);
+        });
+
+        const sortedTimes = Object.keys(byTime).sort();
+        
+        for (const time of sortedTimes) {
+            const timeApts = byTime[time];
+            html += `
+                <div class="time-slot">
+                    <div class="time-slot-header">
+                        <i class="fas fa-clock"></i>
+                        <strong>${time}</strong>
+                    </div>
+                    <div class="time-slot-body">
+            `;
+            
+            for (const apt of timeApts) {
+                html += `
+                    <div class="appointment-item" onclick="viewAppointmentDetails('${apt.id}')">
+                        <div>
+                            <div>
+                                <strong>${apt.clientes?.nome || 'Cliente'}</strong> - 
+                                ${apt.servicos?.nome || 'Serviço'}
+                            </div>
+                            <div style="font-size: 14px; color: #666; margin-top: 8px;">
+                                <i class="fas fa-user"></i> ${apt.barbeiros?.nome || 'Barbeiro'} | 
+                                <i class="fas fa-money-bill"></i> ${formatMoney(apt.valor_total)}
+                            </div>
+                            ${apt.observacoes ? `<div style="font-size: 12px; color: #888; margin-top: 5px;"><i class="fas fa-comment"></i> ${escapeHtml(apt.observacoes.substring(0, 50))}${apt.observacoes.length > 50 ? '...' : ''}</div>` : ''}
+                        </div>
+                        <div class="appointment-actions" onclick="event.stopPropagation()">
+                            <span class="status-badge status-${apt.status}">${getStatusText(apt.status)}</span>
+                            <button class="btn btn-primary btn-sm" onclick="editAppointmentFromModal('${apt.id}')" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-success btn-sm" onclick="completeAppointment('${apt.id}')" title="Concluir">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-warning btn-sm" onclick="cancelAppointment('${apt.id}')" title="Cancelar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAppointment('${apt.id}')" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += `</div>`;
+    }
+    container.innerHTML = html;
+}
 
         async function applyDateFilter() {
             const startDate = document.getElementById('filterStartDate').value;
